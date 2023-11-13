@@ -1,0 +1,14 @@
+{% extends 'materiel/base.html' %} 
+{% block content %}
+
+<main class="container">
+    <h2>Editer matériel</h2>
+    <form method="post" action="/editer-materiel/{{materiel.pk}}">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit", name="creer">Editer matériel</button>
+    </form>
+</main>
+
+
+{% endblock content %}
