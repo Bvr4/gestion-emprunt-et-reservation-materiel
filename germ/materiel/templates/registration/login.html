@@ -1,0 +1,12 @@
+{% extends 'materiel/base.html' %} 
+{% block content %}
+
+<main class="container">
+    <h2>Connexion</h2>
+    <form method="post">
+        {% csrf_token %}{{form}}
+        <p>Vous n'avez pas d'identifiants? Creez un compte <a href="{% url 'creer-compte' %}">ici</a>!</p>
+        <button type="submit" class="btn btn-success">Se connecter</button>
+    </form>
+</main>
+{% endblock content %}

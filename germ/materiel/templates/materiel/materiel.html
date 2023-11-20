@@ -5,10 +5,23 @@
     <h1>{{ materiel.identifiant }} - {{ materiel.nom }}</h1>
     <h4>{{ materiel.categorie }}, {{ materiel.emplacement }}</h3>
     <p>{{ materiel.description }}</p>
+    {% if utilisateur.est_moderateur %}
+    <a href="{% url 'editer-materiel' materiel.pk %}"><button>Editer les informations</button></a>
+    {% endif %}
 </header>
 <main class="container">
     <h2>Voir sa disponiblité et procéder à une réservation</h2>
-    <a href="{% url 'editer-materiel' materiel.pk %}"><button>Editer les informations</button></a>
+
+    {% if utilisateur.peut_emprunter %}
+    <form method="get">
+        {% csrf_token %}
+        <button hx-get="{% url 'reserver-materiel' materiel.pk %}"
+                hx-target="closest form"
+                hx-swap="outerHTML"
+                type="submit">Réserver
+        </button>
+    </form>
+    {% endif %}
 </main>
 
 {% endblock content %}

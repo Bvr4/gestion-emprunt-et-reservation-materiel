@@ -6,7 +6,13 @@
     <form method="post" action="/editer-materiel/{{materiel.pk}}">
         {% csrf_token %}
         {{ form }}
-        <button type="submit", name="creer">Editer matériel</button>
+
+        <p>
+            <div class="grid">         
+                <input type=button value="Annuler" onClick="javascript:history.go(-1);" class="secondary">
+                <button type="submit", name="creer">Enregistrer</button>
+            </div>
+        </p>
     </form>
 </main>
 

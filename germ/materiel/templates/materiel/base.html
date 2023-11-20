@@ -4,6 +4,7 @@
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
     <link rel="stylesheet" type="text/css" href="{% static 'materiel/style.css' %}"/>
+    <script src="https://unpkg.com/htmx.org@1.9.8"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GERM</title>
@@ -15,6 +16,20 @@
                 <li>
                     <a href="{% url 'home' %}" class="contrast">GERM : gestion et réservation de matériel</a> 
                 </li>
+            </ul>
+            <ul>
+                {% if user.is_authenticated %}
+                <li>
+                    Connecté en tant que {{user.username}}
+                </li>
+                <li>
+                    <a href="/logout">Se déconnecter</a>
+                </li>
+                {% else %}
+                <li>
+                    <a href="/login">Se connecter</a>
+                </li>
+                {% endif %}
             </ul>
         </nav>
     </div>

@@ -1,0 +1,16 @@
+<form method="post">
+    <h4>Selectionnez les dates de réservation</h4>
+    <div class="grid">
+        {% csrf_token %}
+        {{ form.as_p }}
+    </div>
+
+    <p>
+        <div class="grid"> 
+            <button type="submit" name="reserver"
+            hx-post="{% url 'reserver-materiel' materiel.pk %}"
+            hx-target="closest form"
+            hx-swap="outerHTML">Reserver</button>
+        </div>
+    </p>
+</form>
