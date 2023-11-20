@@ -18,10 +18,19 @@
     </p>
     {% endif %}
 
-    {% if reservations %}
-        <h4>Autres reservations :</h4>
+    {% if reservation_futures %}
+        <h4>Prochaines réservations :</h4>
         <ul>
-        {% for reservation in reservations %}
+        {% for reservation in reservation_futures %}
+            <li>{{ reservation.utilisateur }}, du {{ reservation.date_debut_resa }} au {{ reservation.date_fin_resa }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if reservation_passees %}
+        <h4>Réservations passées :</h4>
+        <ul>
+        {% for reservation in reservation_passees %}
             <li>{{ reservation.utilisateur }}, du {{ reservation.date_debut_resa }} au {{ reservation.date_fin_resa }}</li>
         {% endfor %}
         </ul>

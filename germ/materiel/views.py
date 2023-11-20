@@ -17,11 +17,22 @@ def materiel(request, materiel_pk):
     context={}
     context['materiel'] = get_object_or_404(Materiel, pk=materiel_pk)
     context['reservations'] = Emprunt.objects.filter(materiel=context['materiel'])
+
     context['reservation_en_cours'] = Emprunt.objects.filter(
         materiel=context['materiel'],
         date_debut_resa__lte=date_du_jour,
         date_fin_resa__gte=date_du_jour 
     ).first()
+
+    context['reservation_passees'] = Emprunt.objects.filter(
+        materiel=context['materiel'],
+        date_fin_resa__lt=date_du_jour 
+    ).order_by('-date_fin_resa').all()[:5]
+
+    context['reservation_futures'] = Emprunt.objects.filter(
+        materiel=context['materiel'],
+        date_debut_resa__gt=date_du_jour 
+    ).order_by('date_debut_resa').all()
 
     if request.user.is_authenticated:
         context['utilisateur'] = get_object_or_404(Utilisateur, user=request.user)
