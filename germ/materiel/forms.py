@@ -50,33 +50,16 @@ class CreationUser(UserCreationForm):
 
 
 class ReserverMateriel(forms.ModelForm):
-    date_debut_resa = forms.DateField(label="Date de début de réservation", widget=forms.widgets.DateInput(attrs={'type': 'date'}))
-    date_fin_resa = forms.DateField(label="Date de fin de réservation", widget=forms.widgets.DateInput(attrs={'type': 'date'}))
+    date_debut_resa = forms.DateField(label="Date de début de réservation", widget=forms.widgets.DateInput(attrs={"type": "date"}))
+    date_fin_resa = forms.DateField(label="Date de fin de réservation", widget=forms.widgets.DateInput(attrs={"type": "date"}))
 
     class Meta:
         model = Emprunt
-        fields = ["date_debut_resa", "date_fin_resa"]
+        fields = ["date_debut_resa", "date_fin_resa", "materiel"]
 
-    def clean(self):
-        date_debut_resa = self.cleaned_data.get("date_debut_resa")
-        date_fin_resa = self.cleaned_data.get("date_fin_resa")
-
-        if date_fin_resa < date_debut_resa: 
-            raise forms.ValidationError({"date_fin_resa": "La date de fin de reservation doit être ultérieure à la date de début de réservation"})
-        
-        # Vérifier s'il existe des réservations qui chevauchent la période d'emprunt demandée
-        resa_chevauche_debut = Emprunt.objects.filter(
-            date_debut_resa__lte=date_debut_resa,
-            date_fin_resa__gte=date_debut_resa
-        )
-        resa_chevauche_fin = Emprunt.objects.filter(
-            date_debut_resa__lte=date_fin_resa,
-            date_fin_resa__gte=date_fin_resa
-        )
-
-        if resa_chevauche_debut.exists():
-            raise forms.ValidationError({"date_debut_resa": "Une réservation existe déjà à la date demandée."})
-        
-        if resa_chevauche_fin.exists():
-            raise forms.ValidationError({"date_fin_resa": "Une réservation existe déjà à la date demandée."})
+    def __init__(self, *args, **kwargs):
+        super(ReserverMateriel, self).__init__(*args, **kwargs)
+        if "initial" in kwargs and "materiel" in kwargs["initial"]:
+            self.fields["materiel"].initial = kwargs["initial"]["materiel"]
+            self.fields["materiel"].widget = forms.HiddenInput()
 

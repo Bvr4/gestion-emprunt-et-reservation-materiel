@@ -7,6 +7,11 @@
 
     <p>
         <div class="grid"> 
+            <button type="submit" name="annuler"
+            class="secondary"
+            hx-post="{% url 'reserver-materiel-bouton' materiel.pk %}"
+            hx-target="closest form"
+            hx-swap="outerHTML">Annuler</button>
             <button type="submit" name="reserver"
             hx-post="{% url 'reserver-materiel' materiel.pk %}"
             hx-target="closest form"

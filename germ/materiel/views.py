@@ -4,6 +4,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User, Group
 from materiel.models import Emplacement, Categorie, Materiel, Emprunt, Utilisateur
 from materiel.forms import CreerMateriel, EditerMateriel, CreationUtilisateur, CreationUser, ReserverMateriel
+import datetime as dt
 
 def index(request):
     context={}
@@ -12,8 +13,16 @@ def index(request):
 
 
 def materiel(request, materiel_pk):
+    date_du_jour = dt.date.today()
     context={}
     context['materiel'] = get_object_or_404(Materiel, pk=materiel_pk)
+    context['reservations'] = Emprunt.objects.filter(materiel=context['materiel'])
+    context['reservation_en_cours'] = Emprunt.objects.filter(
+        materiel=context['materiel'],
+        date_debut_resa__lte=date_du_jour,
+        date_fin_resa__gte=date_du_jour 
+    ).first()
+
     if request.user.is_authenticated:
         context['utilisateur'] = get_object_or_404(Utilisateur, user=request.user)
     return render(request, 'materiel/materiel.html', context=context)
@@ -74,15 +83,19 @@ def get_utilisateur_data(user):
 
 def reserver_materiel(request, materiel_pk):
     materiel = get_object_or_404(Materiel, pk=materiel_pk)
-    if request.method == 'GET':        
-        form = ReserverMateriel()
-    elif request.method == 'POST':
-        form = ReserverMateriel(request.POST)
+    if request.method == 'POST':
+        form = ReserverMateriel(request.POST, initial={'materiel': materiel})
         if form.is_valid():
             reservation = form.save(commit=False)
             reservation.utilisateur=get_utilisateur_data(request.user)
-            reservation.materiel=materiel
             reservation.save()
-            return HttpResponse('OK')
+            return render(request, 'materiel/reserver-materiel-bouton.html', {'materiel':materiel, 'reservation':reservation})
+    else:
+        form = ReserverMateriel(initial={'materiel': materiel})
 
     return render(request, 'materiel/reserver-materiel.html', {'form':form, 'materiel':materiel})
+
+
+def reserver_materiel_bouton(request, materiel_pk):
+    materiel = get_object_or_404(Materiel, pk=materiel_pk)
+    return render(request, 'materiel/reserver-materiel-bouton.html', {'materiel':materiel})

@@ -6,21 +6,29 @@
     <h4>{{ materiel.categorie }}, {{ materiel.emplacement }}</h3>
     <p>{{ materiel.description }}</p>
     {% if utilisateur.est_moderateur %}
-    <a href="{% url 'editer-materiel' materiel.pk %}"><button>Editer les informations</button></a>
+        <a href="{% url 'editer-materiel' materiel.pk %}"><button>Editer les informations</button></a>
     {% endif %}
 </header>
 <main class="container">
     <h2>Voir sa disponiblité et procéder à une réservation</h2>
 
+    {% if reservation_en_cours %}
+    <p><mark>Réservation en cours :
+        {{ reservation_en_cours.utilisateur }}, du {{ reservation_en_cours.date_debut_resa }} au {{ reservation_en_cours.date_fin_resa }}</mark>
+    </p>
+    {% endif %}
+
+    {% if reservations %}
+        <h4>Autres reservations :</h4>
+        <ul>
+        {% for reservation in reservations %}
+            <li>{{ reservation.utilisateur }}, du {{ reservation.date_debut_resa }} au {{ reservation.date_fin_resa }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
     {% if utilisateur.peut_emprunter %}
-    <form method="get">
-        {% csrf_token %}
-        <button hx-get="{% url 'reserver-materiel' materiel.pk %}"
-                hx-target="closest form"
-                hx-swap="outerHTML"
-                type="submit">Réserver
-        </button>
-    </form>
+        {% include 'materiel/reserver-materiel-bouton.html' with materiel=materiel %}
     {% endif %}
 </main>
 
