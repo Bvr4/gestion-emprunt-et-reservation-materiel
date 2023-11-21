@@ -14,26 +14,54 @@
 
     {% if reservation_en_cours %}
     <p><mark>Réservation en cours :
-        {{ reservation_en_cours.utilisateur }}, du {{ reservation_en_cours.date_debut_resa }} au {{ reservation_en_cours.date_fin_resa }}</mark>
+        <a href="{% url 'utilisateur' reservation_en_cours.utilisateur.pk %}">{{ reservation_en_cours.utilisateur }},</a> du {{ reservation_en_cours.date_debut_resa }} au {{ reservation_en_cours.date_fin_resa }}</mark>
     </p>
     {% endif %}
 
+    <h4>Prochaines réservations :</h4>
     {% if reservation_futures %}
-        <h4>Prochaines réservations :</h4>
-        <ul>
+        <table>
+        <tr>
+            <th><b>Emprunteur</b></th>
+            <th><b>Date début réservation</b></th>
+            <th><b>Date fin réservation</b></th>
+        </tr>
         {% for reservation in reservation_futures %}
-            <li>{{ reservation.utilisateur }}, du {{ reservation.date_debut_resa }} au {{ reservation.date_fin_resa }}</li>
+            <tr>
+                <th><a href="{% url 'utilisateur' reservation.utilisateur.pk %}">{{ reservation.utilisateur }}</a></th>
+                <th>{{ reservation.date_debut_resa }}</th>
+                <th>{{ reservation.date_fin_resa }}</th>
+            </tr>
         {% endfor %}
-        </ul>
+        </table>
+    {% else %}
+        <p>Aucune réservation prévue pour ce matériel.</p>
     {% endif %}
 
+    <h4>Réservations passées :</h4>
     {% if reservation_passees %}
-        <h4>Réservations passées :</h4>
-        <ul>
+        <table>
+        <tr>
+            <th><b>Emprunteur</b></th>
+            <th><b>Date début réservation</b></th>
+            <th><b>Date fin réservation</b></th>
+            <th><b>Date début emprunt</b></th>
+            <th><b>Date fin emprunt</b></th>
+            <th><b>Cloturé</b></th>
+        </tr>
         {% for reservation in reservation_passees %}
-            <li>{{ reservation.utilisateur }}, du {{ reservation.date_debut_resa }} au {{ reservation.date_fin_resa }}</li>
+            <tr>
+                <th><a href="{% url 'utilisateur' reservation.utilisateur.pk %}">{{ reservation.utilisateur }}</a></th>
+                <th>{{ reservation.date_debut_resa }}</th>
+                <th>{{ reservation.date_fin_resa }}</th>
+                <th>{{ reservation.date_debut_emprunt|default_if_none:"-" }}</th>
+                <th>{{ reservation.date_fin_emprunt|default_if_none:"-" }}</th>
+                <th>{% if reservation.cloture %}Oui{% else %}Non{% endif %}</th>
+            </tr>
         {% endfor %}
-        </ul>
+        </table>
+    {% else %}
+        <p>Aucune réservation passée pour ce matériel.</p>
     {% endif %}
 
     {% if utilisateur.peut_emprunter %}

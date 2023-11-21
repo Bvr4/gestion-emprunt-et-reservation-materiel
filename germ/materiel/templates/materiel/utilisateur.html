@@ -1,0 +1,40 @@
+{% extends 'materiel/base.html' %} 
+{% block content %}
+
+<header class="container">
+    <h1>{{ utilisateur_fiche.user.username }}</h1>
+    <h4>{{ utilisateur_fiche.user.first_name }}, {{ utilisateur_fiche.user.last_name }}</h3>
+    Commune de résidence : {{ utilisateur_fiche.commune_residence }}
+    <br>Numéro de téléphone : {{ utilisateur_fiche.numero_telephone }}
+    {% if utilisateur_fiche.est_moderateur %}<br><mark>Est modérateur</mark>{% endif %}
+    {% include 'materiel/utilisateur-peut-emprunter.html' with utilisateur_fiche=utilisateur_fiche utilisateur=utilisateur %}
+</header>
+<main class="container">
+    <h3>Réservations réalisées par l'utilisateur :</h3>
+    {% if emprunts %}
+        <table>
+            <tr>
+                <th><b>Matériel</b></th>
+                <th><b>Date début réservation</b></th>
+                <th><b>Date fin réservation</b></th>
+                <th><b>Date début emprunt</b></th>
+                <th><b>Date fin emprunt</b></th>
+                <th><b>Cloturé</b></th>
+            </tr>
+        {% for emprunt in emprunts %}
+            <tr>
+                <th>{{ emprunt.materiel }}</th>
+                <th>{{ emprunt.date_debut_resa }}</th>
+                <th>{{ emprunt.date_fin_resa }}</th>
+                <th>{{ emprunt.date_debut_emprunt|default_if_none:"-" }}</th>
+                <th>{{ emprunt.date_fin_emprunt|default_if_none:"-" }}</th>
+                <th>{% if emprunt.cloture %}Oui{% else %}Non{% endif %}</th>
+            </tr>
+        {% endfor %}
+        </table>
+    {% else %}
+        Aucune réservation réalisée par cet utilisateur
+    {% endif %}
+</main>
+
+{% endblock content %}

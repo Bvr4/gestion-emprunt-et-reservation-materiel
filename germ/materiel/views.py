@@ -110,3 +110,30 @@ def reserver_materiel(request, materiel_pk):
 def reserver_materiel_bouton(request, materiel_pk):
     materiel = get_object_or_404(Materiel, pk=materiel_pk)
     return render(request, 'materiel/reserver-materiel-bouton.html', {'materiel':materiel})
+
+
+def utilisateur(request, utilisateur_pk):
+    context={}
+    # utilisateur dont on affiche les informations
+    context['utilisateur_fiche'] = get_object_or_404(Utilisateur, pk=utilisateur_pk)
+    context['emprunts'] = Emprunt.objects.filter(utilisateur=context['utilisateur_fiche']).order_by('-date_fin_resa').all()
+    # utilisateur actuellement connecté
+    if request.user.is_authenticated:
+        context['utilisateur'] = get_object_or_404(Utilisateur, user=request.user)
+    return render(request, 'materiel/utilisateur.html', context)
+
+def utilisateur_peut_emprunter(request, utilisateur_pk):
+    # utilisateur à modifier
+    utilisateur_fiche = get_object_or_404(Utilisateur, pk=utilisateur_pk)
+    if request.method == 'POST':
+        if utilisateur_fiche.peut_emprunter:
+            utilisateur_fiche.peut_emprunter = False
+        else:
+            utilisateur_fiche.peut_emprunter = True
+        utilisateur_fiche.save()
+
+    # utilisateur actuellement connecté
+    if request.user.is_authenticated:
+        utilisateur = get_object_or_404(Utilisateur, user=request.user)
+
+    return render(request, 'materiel/utilisateur-peut-emprunter.html', {'utilisateur_fiche':utilisateur_fiche, 'utilisateur':utilisateur})
