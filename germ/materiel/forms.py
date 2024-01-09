@@ -25,11 +25,13 @@ class CreerMateriel(forms.ModelForm):
 
 
 class EditerMateriel(forms.ModelForm):
-    identifiant = forms.CharField(disabled=True)
-
     class Meta:
         model = Materiel
         fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super(EditerMateriel, self).__init__(*args, **kwargs)
+        self.fields['identifiant'].widget.attrs['readonly'] = True
         
 
 class CreationUtilisateur(forms.ModelForm):

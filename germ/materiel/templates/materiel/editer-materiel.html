@@ -1,12 +1,10 @@
 {% extends 'materiel/base.html' %} 
 {% block content %}
-
 <main class="container">
     <h2>Editer matériel</h2>
     <form method="post" action="/editer-materiel/{{materiel.pk}}">
         {% csrf_token %}
         {{ form }}
-
         <p>
             <div class="grid">         
                 <input type=button value="Annuler" onClick="javascript:history.go(-1);" class="secondary">
@@ -15,6 +13,4 @@
         </p>
     </form>
 </main>
-
-
 {% endblock content %}

@@ -20,6 +20,7 @@ def materiel(request, materiel_pk):
 
     context['reservation_en_cours'] = Emprunt.objects.filter(
         materiel=context['materiel'],
+        cloture=False,
         date_debut_resa__lte=date_du_jour,
         date_fin_resa__gte=date_du_jour 
     ).first()
@@ -100,9 +101,10 @@ def reserver_materiel(request, materiel_pk):
             reservation = form.save(commit=False)
             reservation.utilisateur=get_utilisateur_data(request.user)
             reservation.save()
-            return render(request, 'materiel/reserver-materiel-bouton.html', {'materiel':materiel, 'reservation':reservation})
+            # return render(request, 'materiel/reserver-materiel-bouton.html', {'materiel':materiel, 'reservation':reservation})   # !>> à creuser, je ne suis pas fan du résultat en terme d'UX/UI
+            return redirect('materiel', materiel_pk=materiel.pk)
     else:
-        form = ReserverMateriel(initial={'materiel': materiel})
+        form = ReserverMateriel(initial={'materiel':materiel})
 
     return render(request, 'materiel/reserver-materiel.html', {'form':form, 'materiel':materiel})
 
@@ -122,6 +124,7 @@ def utilisateur(request, utilisateur_pk):
         context['utilisateur'] = get_object_or_404(Utilisateur, user=request.user)
     return render(request, 'materiel/utilisateur.html', context)
 
+
 def utilisateur_peut_emprunter(request, utilisateur_pk):
     # utilisateur à modifier
     utilisateur_fiche = get_object_or_404(Utilisateur, pk=utilisateur_pk)
@@ -137,3 +140,24 @@ def utilisateur_peut_emprunter(request, utilisateur_pk):
         utilisateur = get_object_or_404(Utilisateur, user=request.user)
 
     return render(request, 'materiel/utilisateur-peut-emprunter.html', {'utilisateur_fiche':utilisateur_fiche, 'utilisateur':utilisateur})
+
+
+def emprunter_materiel_bouton(request, emprunt_pk):
+    emprunt = get_object_or_404(Emprunt, pk=emprunt_pk)
+    if request.method == 'POST':
+        action_emprunt = request.POST.get('action_emprunt', None)
+        print (action_emprunt)
+        if action_emprunt == 'retourner':
+        # if emprunt.date_debut_emprunt is not None and emprunt.date_fin_emprunt is None:
+            emprunt.date_fin_emprunt = dt.date.today()
+            emprunt.cloture = True
+            emprunt.save()
+        elif action_emprunt == 'emprunter':
+        # if emprunt.date_debut_emprunt is None:
+            emprunt.date_debut_emprunt = dt.date.today()
+            emprunt.save()
+        elif action_emprunt == 'annuler':
+            emprunt.cloture = True
+            emprunt.save()
+
+    return render(request, 'materiel/emprunter-materiel-bouton.html', {'emprunt':emprunt})

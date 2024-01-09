@@ -68,11 +68,13 @@ class Emprunt(models.Model):
         # Vérifier s'il existe des réservations qui chevauchent la période d'emprunt demandée
         resa_chevauche_debut = Emprunt.objects.filter(
             materiel=self.materiel,
+            cloture=False,
             date_debut_resa__lte=self.date_debut_resa,
             date_fin_resa__gte=self.date_debut_resa
         ).exclude(pk=self.pk)
         resa_chevauche_fin = Emprunt.objects.filter(
             materiel=self.materiel,
+            cloture=False,
             date_debut_resa__lte=self.date_fin_resa,
             date_fin_resa__gte=self.date_fin_resa
         ).exclude(pk=self.pk)

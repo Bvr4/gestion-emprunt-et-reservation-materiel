@@ -12,61 +12,70 @@
 <main class="container">
     <h2>Voir sa disponiblité et procéder à une réservation</h2>
 
-    {% if reservation_en_cours %}
-    <p><mark>Réservation en cours :
-        <a href="{% url 'utilisateur' reservation_en_cours.utilisateur.pk %}">{{ reservation_en_cours.utilisateur }},</a> du {{ reservation_en_cours.date_debut_resa }} au {{ reservation_en_cours.date_fin_resa }}</mark>
-    </p>
-    {% endif %}
+    <div id="reservations">
+        {% if reservation_en_cours %}
+        <p><mark>Réservation en cours :
+            <a href="{% url 'utilisateur' reservation_en_cours.utilisateur.pk %}">{{ reservation_en_cours.utilisateur }},</a> du {{ reservation_en_cours.date_debut_resa }} au {{ reservation_en_cours.date_fin_resa }}</mark>
+        </p>
 
-    <h4>Prochaines réservations :</h4>
-    {% if reservation_futures %}
-        <table>
-        <tr>
-            <th><b>Emprunteur</b></th>
-            <th><b>Date début réservation</b></th>
-            <th><b>Date fin réservation</b></th>
-        </tr>
-        {% for reservation in reservation_futures %}
-            <tr>
-                <th><a href="{% url 'utilisateur' reservation.utilisateur.pk %}">{{ reservation.utilisateur }}</a></th>
-                <th>{{ reservation.date_debut_resa }}</th>
-                <th>{{ reservation.date_fin_resa }}</th>
-            </tr>
-        {% endfor %}
-        </table>
-    {% else %}
-        <p>Aucune réservation prévue pour ce matériel.</p>
-    {% endif %}
+            {% if utilisateur.peut_emprunter and utilisateur.pk == reservation_en_cours.utilisateur.pk %}
+                {% include 'materiel/emprunter-materiel-bouton.html' with emprunt=reservation_en_cours %}
+            {% endif %}
+        {% endif %}
 
-    <h4>Réservations passées :</h4>
-    {% if reservation_passees %}
-        <table>
-        <tr>
-            <th><b>Emprunteur</b></th>
-            <th><b>Date début réservation</b></th>
-            <th><b>Date fin réservation</b></th>
-            <th><b>Date début emprunt</b></th>
-            <th><b>Date fin emprunt</b></th>
-            <th><b>Cloturé</b></th>
-        </tr>
-        {% for reservation in reservation_passees %}
+        <h4>Prochaines réservations :</h4>
+        {% if reservation_futures %}
+            <table>
             <tr>
-                <th><a href="{% url 'utilisateur' reservation.utilisateur.pk %}">{{ reservation.utilisateur }}</a></th>
-                <th>{{ reservation.date_debut_resa }}</th>
-                <th>{{ reservation.date_fin_resa }}</th>
-                <th>{{ reservation.date_debut_emprunt|default_if_none:"-" }}</th>
-                <th>{{ reservation.date_fin_emprunt|default_if_none:"-" }}</th>
-                <th>{% if reservation.cloture %}Oui{% else %}Non{% endif %}</th>
+                <th><b>Emprunteur</b></th>
+                <th><b>Date début réservation</b></th>
+                <th><b>Date fin réservation</b></th>
             </tr>
-        {% endfor %}
-        </table>
-    {% else %}
-        <p>Aucune réservation passée pour ce matériel.</p>
-    {% endif %}
+            {% for reservation in reservation_futures %}
+                <tr>
+                    <th><a href="{% url 'utilisateur' reservation.utilisateur.pk %}">{{ reservation.utilisateur }}</a></th>
+                    <th>{{ reservation.date_debut_resa }}</th>
+                    <th>{{ reservation.date_fin_resa }}</th>
+                </tr>
+            {% endfor %}
+            </table>
+        {% else %}
+            <p>Aucune réservation prévue pour ce matériel.</p>
+        {% endif %}
+
+        <h4>Réservations passées :</h4>
+        {% if reservation_passees %}
+            <table>
+            <tr>
+                <th><b>Emprunteur</b></th>
+                <th><b>Date début réservation</b></th>
+                <th><b>Date fin réservation</b></th>
+                <th><b>Date début emprunt</b></th>
+                <th><b>Date fin emprunt</b></th>
+                <th><b>Cloturé</b></th>
+            </tr>
+            {% for reservation in reservation_passees %}
+                <tr>
+                    <th><a href="{% url 'utilisateur' reservation.utilisateur.pk %}">{{ reservation.utilisateur }}</a></th>
+                    <th>{{ reservation.date_debut_resa }}</th>
+                    <th>{{ reservation.date_fin_resa }}</th>
+                    <th>{{ reservation.date_debut_emprunt|default_if_none:"-" }}</th>
+                    <th>{{ reservation.date_fin_emprunt|default_if_none:"-" }}</th>
+                    <th>{% if reservation.cloture %}Oui{% else %}Non{% endif %}</th>
+                </tr>
+            {% endfor %}
+            </table>
+        {% else %}
+            <p>Aucune réservation passée pour ce matériel.</p>
+        {% endif %}
+    </div>
 
     {% if utilisateur.peut_emprunter %}
         {% include 'materiel/reserver-materiel-bouton.html' with materiel=materiel %}
     {% endif %}
+
 </main>
 
 {% endblock content %}
+
+
