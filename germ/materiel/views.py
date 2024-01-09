@@ -7,8 +7,34 @@ from materiel.forms import CreerMateriel, EditerMateriel, CreationUtilisateur, C
 import datetime as dt
 
 def index(request):
+    date_du_jour = dt.date.today()
     context={}
     context['materiels'] = Materiel.objects.order_by('identifiant')
+    
+    materiels_empruntes = {}
+    materiels_reserves = {}
+
+    for materiel in context['materiels']:
+        reservation = Emprunt.objects.filter(
+            materiel=materiel,
+            cloture=False,
+            date_debut_resa__lte=date_du_jour,
+            date_fin_resa__gte=date_du_jour 
+        ).first()
+
+        emprunt = Emprunt.objects.filter(
+            materiel=materiel,
+            cloture=False,
+            date_debut_resa__lte=date_du_jour,
+            date_debut_emprunt__lte=date_du_jour
+        ).first()
+
+        materiels_reserves[materiel.id] = reservation is not None
+        materiels_empruntes[materiel.id] = emprunt is not None
+
+    context['materiels_reserves'] = materiels_reserves
+    context['materiels_empruntes'] = materiels_empruntes
+
     return render(request, 'materiel/index.html', context=context)
 
 

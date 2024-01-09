@@ -2,4 +2,5 @@
     <th><a href="{% url 'materiel' materiel.pk %}">{{ materiel.nom }}</a></th>
     <th>{{ materiel.identifiant }}</th>
     <th>{{ materiel.categorie }}</th>
+    <th>{% if emprunte %}Emprunté{% elif reserve %}Réservé{% else %}Disponible{% endif %}</th>
 </tr>
