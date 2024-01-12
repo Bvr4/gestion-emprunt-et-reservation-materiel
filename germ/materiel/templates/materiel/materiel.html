@@ -23,6 +23,10 @@
             {% endif %}
         {% endif %}
 
+        {% if not materiel.empruntable %}
+            <p><mark>Ce matériel n'est pas disponible à l'emprunt pour le moment.</mark></p>
+        {% endif %}
+
         <h4>Prochaines réservations :</h4>
         {% if reservation_futures %}
             <table>
@@ -68,7 +72,7 @@
         {% else %}
             <p>Aucune réservation passée pour ce matériel.</p>
         {% endif %}
-        {% if utilisateur.peut_emprunter %}
+        {% if utilisateur.peut_emprunter and materiel.empruntable %}
             {% include 'materiel/reserver-materiel-bouton.html' with materiel=materiel %}
         {% endif %}
     </section>
