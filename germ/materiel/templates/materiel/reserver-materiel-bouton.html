@@ -1,7 +1,3 @@
-{% if reservation %}
-<p><ins>Reservation enregistrée du {{ reservation.date_debut_resa }} au {{ reservation.date_fin_resa }}</ins></p>
-{% endif %}
-
 <form method="get">
     {% csrf_token %}
     <button hx-get="{% url 'reserver-materiel' materiel.pk %}"

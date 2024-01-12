@@ -1,5 +1,5 @@
 from django import forms
-from materiel.models import Materiel, Categorie, Utilisateur, Emprunt
+from materiel.models import Materiel, Categorie, Utilisateur, Emprunt, Commentaire
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
@@ -65,3 +65,8 @@ class ReserverMateriel(forms.ModelForm):
             self.fields["materiel"].initial = kwargs["initial"]["materiel"]
             self.fields["materiel"].widget = forms.HiddenInput()
 
+
+class CreerCommentaire(forms.ModelForm):
+    class Meta:
+        model = Commentaire
+        fields = ["titre", "texte"]

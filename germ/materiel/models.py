@@ -84,3 +84,12 @@ class Emprunt(models.Model):
         
         if resa_chevauche_fin.exists():
             raise ValidationError({"date_fin_resa": "Une réservation existe déjà à la date demandée."})
+
+
+# Commentaires, liés à un matériel 
+class Commentaire(models.Model):
+    materiel = models.ForeignKey(Materiel, on_delete=models.CASCADE)
+    auteur = models.ForeignKey(Utilisateur, on_delete=models.RESTRICT)
+    titre = models.CharField(max_length=80)
+    texte = models.TextField()
+    date = models.DateTimeField()

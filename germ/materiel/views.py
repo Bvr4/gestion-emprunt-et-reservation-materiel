@@ -2,9 +2,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User, Group
-from materiel.models import Emplacement, Categorie, Materiel, Emprunt, Utilisateur
-from materiel.forms import CreerMateriel, EditerMateriel, CreationUtilisateur, CreationUser, ReserverMateriel
+from materiel.models import Emplacement, Categorie, Materiel, Emprunt, Utilisateur, Commentaire
+from materiel.forms import CreerMateriel, EditerMateriel, CreationUtilisateur, CreationUser, ReserverMateriel, CreerCommentaire
 import datetime as dt
+from django.utils import timezone
 
 def index(request):
     date_du_jour = dt.date.today()
@@ -42,6 +43,7 @@ def materiel(request, materiel_pk):
     date_du_jour = dt.date.today()
     context={}
     context['materiel'] = get_object_or_404(Materiel, pk=materiel_pk)
+    context['commentaires'] = Commentaire.objects.filter(materiel=context['materiel']).order_by('-date')
     context['reservations'] = Emprunt.objects.filter(materiel=context['materiel'])
 
     context['reservation_en_cours'] = Emprunt.objects.filter(
@@ -125,7 +127,7 @@ def reserver_materiel(request, materiel_pk):
         form = ReserverMateriel(request.POST, initial={'materiel': materiel})
         if form.is_valid():
             reservation = form.save(commit=False)
-            reservation.utilisateur=get_utilisateur_data(request.user)
+            reservation.utilisateur = get_utilisateur_data(request.user)
             reservation.save()
             # return render(request, 'materiel/reserver-materiel-bouton.html', {'materiel':materiel, 'reservation':reservation})   # !>> à creuser, je ne suis pas fan du résultat en terme d'UX/UI
             return redirect('materiel', materiel_pk=materiel.pk)
@@ -187,3 +189,21 @@ def emprunter_materiel_bouton(request, emprunt_pk):
             emprunt.save()
 
     return render(request, 'materiel/emprunter-materiel-bouton.html', {'emprunt':emprunt})
+
+
+def creer_commentaire(request, materiel_pk):
+    if request.method == "POST":
+        form = CreerCommentaire(request.POST)
+        if form.is_valid():
+            commentaire = form.save(commit=False)
+            commentaire.auteur = get_utilisateur_data(request.user)
+            commentaire.materiel = get_object_or_404(Materiel, pk=materiel_pk)
+            # now = dt.datetime.now()
+            # commentaire.date = dt.datetime.timestamp(now)
+            commentaire.date = timezone.now()
+            commentaire.save()
+            return render(request, 'materiel/commentaire.html', {'commentaire':commentaire})
+    else:
+        form = CreerCommentaire()
+        materiel = get_object_or_404(Materiel, pk=materiel_pk)
+    return render(request, 'materiel/creer-commentaire.html', {'form':form, 'materiel':materiel})

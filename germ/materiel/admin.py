@@ -1,5 +1,5 @@
 from django.contrib import admin
-from materiel.models import Emplacement, Categorie, Materiel, Emprunt, Utilisateur
+from materiel.models import Emplacement, Categorie, Materiel, Emprunt, Utilisateur, Commentaire
 
 # Définition des affichages dans l'interface admin
 class EmplacementAdmin(admin.ModelAdmin):
@@ -17,8 +17,12 @@ class EmpruntAdmin(admin.ModelAdmin):
 class UtilisateurAdmin(admin.ModelAdmin):
     list_display = ('user', 'numero_telephone', 'commune_residence', 'est_moderateur', 'peut_emprunter')
 
+class CommentaireAdmin(admin.ModelAdmin):
+    list_display = ('materiel', 'auteur', 'titre', 'texte', 'date')
+
 admin.site.register(Emplacement, EmplacementAdmin)
 admin.site.register(Categorie, CategorieAdmin)
 admin.site.register(Materiel, MaterielAdmin)
 admin.site.register(Emprunt, EmpruntAdmin)
 admin.site.register(Utilisateur, UtilisateurAdmin)
+admin.site.register(Commentaire, CommentaireAdmin)

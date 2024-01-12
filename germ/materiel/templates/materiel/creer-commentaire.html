@@ -1,0 +1,13 @@
+<form method="post">
+    <article>
+        <h4>Nouveau commentaire</h4>
+        <P>
+            {% csrf_token %}
+            {{ form }}
+            <button hx-post="{% url 'creer-commentaire' materiel.pk %}"
+            hx-swap="outerHTML"
+            hx-target="closest form"
+            type="submit">Publier</button>
+        </P>
+    </article>
+</form>

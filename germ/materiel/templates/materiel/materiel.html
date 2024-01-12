@@ -4,19 +4,19 @@
 <header class="container">
     <h1>{{ materiel.identifiant }} - {{ materiel.nom }}</h1>
     <h4>{{ materiel.categorie }}, {{ materiel.emplacement }}</h3>
-    <p>{{ materiel.description }}</p>
+    <p>{{ materiel.description|linebreaks }}</p>
     {% if utilisateur.est_moderateur %}
         <a href="{% url 'editer-materiel' materiel.pk %}"><button>Editer les informations</button></a>
     {% endif %}
 </header>
 <main class="container">
+    <section id="reservations">
     <h2>Voir sa disponiblité et procéder à une réservation</h2>
 
-    <div id="reservations">
         {% if reservation_en_cours %}
-        <p><mark>Réservation en cours :
-            <a href="{% url 'utilisateur' reservation_en_cours.utilisateur.pk %}">{{ reservation_en_cours.utilisateur }},</a> du {{ reservation_en_cours.date_debut_resa }} au {{ reservation_en_cours.date_fin_resa }}</mark>
-        </p>
+            <p><mark>Réservation en cours :
+                <a href="{% url 'utilisateur' reservation_en_cours.utilisateur.pk %}">{{ reservation_en_cours.utilisateur }},</a> du {{ reservation_en_cours.date_debut_resa }} au {{ reservation_en_cours.date_fin_resa }}</mark>
+            </p>
 
             {% if utilisateur.peut_emprunter and utilisateur.pk == reservation_en_cours.utilisateur.pk %}
                 {% include 'materiel/emprunter-materiel-bouton.html' with emprunt=reservation_en_cours %}
@@ -68,11 +68,31 @@
         {% else %}
             <p>Aucune réservation passée pour ce matériel.</p>
         {% endif %}
-    </div>
+        {% if utilisateur.peut_emprunter %}
+            {% include 'materiel/reserver-materiel-bouton.html' with materiel=materiel %}
+        {% endif %}
+    </section>
 
-    {% if utilisateur.peut_emprunter %}
-        {% include 'materiel/reserver-materiel-bouton.html' with materiel=materiel %}
-    {% endif %}
+    <section id="commentaires">
+        <h2>Commentaires</h2>
+        <p>Donnez ici des informations sur le suivi du matériel (pannes, entretiens réalisés, frais éventuels...)</p>
+
+        {% for commentaire in commentaires %}
+            {% include 'materiel/commentaire.html' with commentaire=commentaire %}
+        {% endfor %}
+
+
+        <form method="get">
+            {% csrf_token %}
+            <button hx-get="{% url 'creer-commentaire' materiel.pk %}"
+                    hx-target="closest form"
+                    hx-swap="outerHTML"
+                    type="submit">Ajouter un commentaire
+            </button>
+        </form>
+
+
+    </section>
 
 </main>
 

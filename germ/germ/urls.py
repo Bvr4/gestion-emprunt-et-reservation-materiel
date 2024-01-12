@@ -14,5 +14,6 @@ urlpatterns = [
     path('emprunter-materiel-bouton/<int:emprunt_pk>', mviews.emprunter_materiel_bouton, name='emprunter-materiel-bouton'),
     path('utilisateur/<int:utilisateur_pk>', mviews.utilisateur, name='utilisateur'),
     path('utilisateur-peut-emprunter/<int:utilisateur_pk>', mviews.utilisateur_peut_emprunter, name='utilisateur-peut-emprunter'),
+    path('creer-commentaire/<int:materiel_pk>', mviews.creer_commentaire, name='creer-commentaire'),
     path('admin/', admin.site.urls),
 ]

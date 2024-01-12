@@ -1,0 +1,5 @@
+<article>
+    <h4>{{ commentaire.titre }}</h4>
+    <p>{{ commentaire.texte|linebreaks }}</p>
+    <footer><small><a href="{% url 'utilisateur' commentaire.auteur.pk %}">{{ commentaire.auteur  }}</a>, le {{ commentaire.date }}</small></footer>
+</article>
