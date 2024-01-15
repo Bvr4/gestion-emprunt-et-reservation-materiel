@@ -80,17 +80,17 @@ def creer_materiel(request):
 
 
 def editer_materiel(request, materiel_pk):
-    materiel = get_object_or_404(Materiel, pk=materiel_pk)
+    materiel_a_editer = get_object_or_404(Materiel, pk=materiel_pk)
     if request.method == "POST":
         form = EditerMateriel(request.POST)
         if form.is_valid():
-            materiel = form.save(commit=False)
-            materiel.pk = materiel_pk
-            materiel.save()
-            return redirect('/')
+            materiel_a_editer = form.save(commit=False)
+            materiel_a_editer.pk = materiel_pk
+            materiel_a_editer.save()
+            return redirect(materiel, materiel_pk=materiel_pk)
     else:
-        form = EditerMateriel(instance=materiel)
-    return render(request, 'materiel/editer-materiel.html', {'form':form, 'materiel':materiel})
+        form = EditerMateriel(instance=materiel_a_editer)
+    return render(request, 'materiel/editer-materiel.html', {'form':form, 'materiel':materiel_a_editer})
 
 
 def creer_compte(request):
