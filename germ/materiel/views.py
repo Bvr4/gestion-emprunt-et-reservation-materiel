@@ -176,12 +176,10 @@ def emprunter_materiel_bouton(request, emprunt_pk):
         action_emprunt = request.POST.get('action_emprunt', None)
         print (action_emprunt)
         if action_emprunt == 'retourner':
-        # if emprunt.date_debut_emprunt is not None and emprunt.date_fin_emprunt is None:
             emprunt.date_fin_emprunt = dt.date.today()
             emprunt.cloture = True
             emprunt.save()
         elif action_emprunt == 'emprunter':
-        # if emprunt.date_debut_emprunt is None:
             emprunt.date_debut_emprunt = dt.date.today()
             emprunt.save()
         elif action_emprunt == 'annuler':
@@ -192,18 +190,21 @@ def emprunter_materiel_bouton(request, emprunt_pk):
 
 
 def creer_commentaire(request, materiel_pk):
+    materiel = get_object_or_404(Materiel, pk=materiel_pk)
     if request.method == "POST":
         form = CreerCommentaire(request.POST)
         if form.is_valid():
             commentaire = form.save(commit=False)
             commentaire.auteur = get_utilisateur_data(request.user)
-            commentaire.materiel = get_object_or_404(Materiel, pk=materiel_pk)
-            # now = dt.datetime.now()
-            # commentaire.date = dt.datetime.timestamp(now)
+            commentaire.materiel = materiel
             commentaire.date = timezone.now()
             commentaire.save()
-            return render(request, 'materiel/commentaire.html', {'commentaire':commentaire})
+            return render(request, 'materiel/commentaire.html', {'commentaire':commentaire, 'materiel':materiel, 'nouveau_commentaire':True})
     else:
         form = CreerCommentaire()
-        materiel = get_object_or_404(Materiel, pk=materiel_pk)
     return render(request, 'materiel/creer-commentaire.html', {'form':form, 'materiel':materiel})
+
+
+def creer_commentaire_bouton(request, materiel_pk):
+    materiel = get_object_or_404(Materiel, pk=materiel_pk)
+    return render(request, 'materiel/creer-commentaire-bouton.html', {'materiel':materiel})

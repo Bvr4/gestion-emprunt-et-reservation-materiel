@@ -1,0 +1,8 @@
+<form method="get">
+    {% csrf_token %}
+    <button hx-get="{% url 'creer-commentaire' materiel.pk %}"
+            hx-target="closest form"
+            hx-swap="outerHTML"
+            type="submit">Ajouter un commentaire
+    </button>
+</form>

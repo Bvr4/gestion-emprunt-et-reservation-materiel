@@ -80,21 +80,12 @@
     <section id="commentaires">
         <h2>Commentaires</h2>
         <p>Donnez ici des informations sur le suivi du matériel (pannes, entretiens réalisés, frais éventuels...)</p>
+               
+        {% include 'materiel/creer-commentaire-bouton.html' with materiel=materiel %}
 
         {% for commentaire in commentaires %}
             {% include 'materiel/commentaire.html' with commentaire=commentaire %}
         {% endfor %}
-
-
-        <form method="get">
-            {% csrf_token %}
-            <button hx-get="{% url 'creer-commentaire' materiel.pk %}"
-                    hx-target="closest form"
-                    hx-swap="outerHTML"
-                    type="submit">Ajouter un commentaire
-            </button>
-        </form>
-
 
     </section>
 

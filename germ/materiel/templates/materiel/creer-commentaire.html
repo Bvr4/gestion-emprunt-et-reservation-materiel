@@ -4,10 +4,17 @@
         <P>
             {% csrf_token %}
             {{ form }}
-            <button hx-post="{% url 'creer-commentaire' materiel.pk %}"
-            hx-swap="outerHTML"
-            hx-target="closest form"
-            type="submit">Publier</button>
+            <div class="grid"> 
+                <button type="submit" name="annuler"
+                        class="secondary"
+                        hx-post="{% url 'creer-commentaire-bouton' materiel.pk %}"
+                        hx-target="closest form"
+                        hx-swap="outerHTML">Annuler</button>
+                <button hx-post="{% url 'creer-commentaire' materiel.pk %}"
+                        hx-swap="outerHTML"
+                        hx-target="closest form"
+                        type="submit">Publier</button>
+            </div>
         </P>
     </article>
 </form>

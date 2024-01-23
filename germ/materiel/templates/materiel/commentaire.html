@@ -1,3 +1,6 @@
+{% if nouveau_commentaire %}
+    {% include 'materiel/creer-commentaire-bouton.html' with materiel=materiel %}
+{% endif %}
 <article>
     <h4>{{ commentaire.titre }}</h4>
     <p>{{ commentaire.texte|linebreaks }}</p>
