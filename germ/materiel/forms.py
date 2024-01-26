@@ -7,21 +7,24 @@ class CreerMateriel(forms.ModelForm):
     class Meta:
         model = Materiel
         fields = ["nom", "identifiant", "description", "categorie", "emplacement"]
-    
-    def clean_identifiant(self):
-        identifiant = self.cleaned_data.get("identifiant")
-
-        if Materiel.objects.filter(identifiant=identifiant).first():
-            raise forms.ValidationError("Identifiant déjà utilisé. Veuillez en définir un nouveau")
-
-        return identifiant
 
     def clean(self):
-        identifiant = self.cleaned_data.get("identifiant")
-        categorie = self.cleaned_data.get("categorie")
+        cleaned_data = super().clean()  # Assurez-vous d'appeler la méthode clean de la classe mère
+
+        identifiant = cleaned_data.get("identifiant")
+        categorie = cleaned_data.get("categorie")
+
+        if Materiel.objects.filter(identifiant=identifiant).exists():
+            raise forms.ValidationError({"identifiant": "Identifiant déjà utilisé. Veuillez en définir un nouveau"})
         
         if not identifiant.startswith(categorie.prefixe_identifiant):
             raise forms.ValidationError({"identifiant": "L'identifiant doit commencer par le préfixe de la catégorie à laquelle il appartient"})
+        
+        len_prefix = len(categorie.prefixe_identifiant)
+        if not identifiant[len_prefix:].isdigit():
+            raise forms.ValidationError({"identifiant": "L'identifiant doit contenir le préfixe de la catégorie à laquelle il appartient, puis une partie numérique"})
+
+        return cleaned_data
 
 
 class EditerMateriel(forms.ModelForm):
