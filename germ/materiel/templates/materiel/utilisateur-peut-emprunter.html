@@ -1,18 +1,21 @@
 {% if utilisateur_fiche.peut_emprunter %}
 <div>
     <ins>Peut emprunter</ins><br>
-    <form method="post">
-        {% csrf_token %}
-        <button hx-post="{% url 'utilisateur-peut-emprunter' utilisateur.pk %}"
-                hx-target="closest div"
-                hx-swap="outerHTML"
-                type="submit">Empêcher l'emprunt pour cet utilisateur
-        </button>
-    </form>
+    {% if utilisateur.est_moderateur %}
+        <form method="post">
+            {% csrf_token %}
+            <button hx-post="{% url 'utilisateur-peut-emprunter' utilisateur.pk %}"
+                    hx-target="closest div"
+                    hx-swap="outerHTML"
+                    type="submit">Empêcher l'emprunt pour cet utilisateur
+            </button>
+        </form>
+    {% endif %}
 </div>
 {% else %}
 <div>
     <mark>Ne peut pas emprunter</mark><br>
+    {% if utilisateur.est_moderateur %}
     <form method="post">
         {% csrf_token %}
         <button hx-post="{% url 'utilisateur-peut-emprunter' utilisateur.pk %}"
@@ -21,5 +24,6 @@
                 type="submit">Autoriser l'emprunt pour cet utilisateur
         </button>
     </form>
+    {% endif %}
 </div>
 {% endif %}

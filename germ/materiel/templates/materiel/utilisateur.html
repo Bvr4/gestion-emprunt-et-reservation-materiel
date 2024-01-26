@@ -8,6 +8,7 @@
     <br>Numéro de téléphone : {{ utilisateur_fiche.numero_telephone }}
     {% if utilisateur_fiche.est_moderateur %}<br><mark>Est modérateur</mark>{% endif %}
     {% include 'materiel/utilisateur-peut-emprunter.html' with utilisateur_fiche=utilisateur_fiche utilisateur=utilisateur %}
+    
 </header>
 <main class="container">
     <h3>Réservations réalisées par l'utilisateur :</h3>
