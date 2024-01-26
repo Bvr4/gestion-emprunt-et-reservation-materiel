@@ -1,7 +1,7 @@
 from django import forms
-from materiel.models import Materiel, Categorie, Utilisateur, Emprunt, Commentaire
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from materiel.models import Materiel, Categorie, Utilisateur, Emprunt, Commentaire
 
 class CreerMateriel(forms.ModelForm):
     class Meta:
@@ -9,7 +9,7 @@ class CreerMateriel(forms.ModelForm):
         fields = ["nom", "identifiant", "description", "categorie", "emplacement"]
 
     def clean(self):
-        cleaned_data = super().clean()  # Assurez-vous d'appeler la méthode clean de la classe mère
+        cleaned_data = super().clean() 
 
         identifiant = cleaned_data.get("identifiant")
         categorie = cleaned_data.get("categorie")
