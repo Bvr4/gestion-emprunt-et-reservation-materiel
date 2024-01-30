@@ -1,11 +1,13 @@
+import datetime as dt
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User, Group
+from django.utils import timezone
 from materiel.models import Emplacement, Categorie, Materiel, Emprunt, Utilisateur, Commentaire
 from materiel.forms import CreerMateriel, EditerMateriel, CreationUtilisateur, CreationUser, ReserverMateriel, CreerCommentaire
-import datetime as dt
-from django.utils import timezone
+from .utils import get_utilisateur_data, prochain_id_materiel
+
 
 def index(request):
     date_du_jour = dt.date.today()
@@ -79,6 +81,18 @@ def creer_materiel(request):
     return render(request, 'materiel/creer-materiel.html', {'form':form})
 
 
+# Permet de récupérer le prochain identifiant lors de la création de matériel, quand l'utilisateur choisi une catégorie
+def get_prochain_identifiant(request):
+    if request.method == 'GET':
+        categorie = request.GET.get('categorie')
+        if categorie is not None and categorie is not '':
+            prochain_identifiant = prochain_id_materiel(categorie)
+            # On renvoie le formulaire avec la valeur initiale définie
+            form = CreerMateriel(initial={'identifiant': prochain_identifiant})
+            return render(request, 'materiel/creer-materiel-prochain-identifiant.html', {'form':form})
+    return HttpResponse(400)
+
+
 def editer_materiel(request, materiel_pk):
     materiel_a_editer = get_object_or_404(Materiel, pk=materiel_pk)
     if request.method == "POST":
@@ -109,16 +123,6 @@ def creer_compte(request):
         form_utilisateur = CreationUtilisateur()
 
     return render(request, 'registration/creer-compte.html', {"form_user":form_user, "form_utilisateur":form_utilisateur})
-
-
-def get_utilisateur_data(user):
-    # Utilisation de la relation reverse pour accéder aux informations Utilisateur depuis User
-    try:
-        utilisateur_data = user.utilisateur
-    except Utilisateur.DoesNotExist:
-        utilisateur_data = None
-
-    return utilisateur_data
 
 
 def reserver_materiel(request, materiel_pk):

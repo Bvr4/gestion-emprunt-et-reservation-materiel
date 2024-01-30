@@ -6,7 +6,19 @@ from materiel.models import Materiel, Categorie, Utilisateur, Emprunt, Commentai
 class CreerMateriel(forms.ModelForm):
     class Meta:
         model = Materiel
-        fields = ["nom", "identifiant", "description", "categorie", "emplacement"]
+        fields = ["nom", "categorie", "emplacement", "identifiant", "description"]
+
+    def __init__(self, *args, **kwargs):
+        super(CreerMateriel, self).__init__(*args, **kwargs)
+        # On ajoute les balises htmx au champ catégorie, pour mettre à jour l'identifiant quand on selectionne une catégorie
+        self.fields["categorie"].widget.attrs["hx-get"] = "/get-prochain-identifiant"
+        self.fields["categorie"].widget.attrs["hx-trigger"] = "change"
+        self.fields["categorie"].widget.attrs["hx-target"] = "#id_identifiant"
+        self.fields["categorie"].widget.attrs["hx-swap"] = "outerHTML"
+
+        if "initial" in kwargs and "identifiant" in kwargs["initial"]:
+            self.fields["identifiant"].initial = kwargs["initial"]["identifiant"]
+
 
     def clean(self):
         cleaned_data = super().clean() 
@@ -30,7 +42,7 @@ class CreerMateriel(forms.ModelForm):
 class EditerMateriel(forms.ModelForm):
     class Meta:
         model = Materiel
-        fields = "__all__"
+        fields = ["nom", "categorie", "emplacement", "identifiant", "description", "empruntable"]
 
     def __init__(self, *args, **kwargs):
         super(EditerMateriel, self).__init__(*args, **kwargs)
