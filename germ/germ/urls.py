@@ -10,6 +10,7 @@ urlpatterns = [
     path('materiel/<int:materiel_pk>', mviews.materiel, name='materiel'),
     path('creer-materiel/', mviews.creer_materiel, name='creer-materiel'),
     path('editer-materiel/<int:materiel_pk>', mviews.editer_materiel, name='editer-materiel'),
+    path('supprimer-materiel/<int:materiel_pk>', mviews.supprimer_materiel, name='supprimer-materiel'),
     path('reserver-materiel/<int:materiel_pk>', mviews.reserver_materiel, name='reserver-materiel'),
     path('reserver-materiel-bouton/<int:materiel_pk>', mviews.reserver_materiel_bouton, name='reserver-materiel-bouton'),
     path('emprunter-materiel-bouton/<int:emprunt_pk>', mviews.emprunter_materiel_bouton, name='emprunter-materiel-bouton'),

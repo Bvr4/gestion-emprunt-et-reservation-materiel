@@ -12,5 +12,9 @@
             </div>
         </p>
     </form>
+    <form>     
+        {% csrf_token %}   
+        <button class="outline secondary" hx-target="closest body" hx-post="{% url 'supprimer-materiel' materiel.pk %}" hx-confirm="Etes vous sur de vouloir supprimer ce matériel ?">Supprimer</button> 
+    </form>
 </main>
 {% endblock content %}

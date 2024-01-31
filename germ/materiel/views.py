@@ -111,6 +111,12 @@ def editer_materiel(request, materiel_pk):
     return render(request, 'materiel/editer-materiel.html', {'form':form, 'materiel':materiel_a_editer})
 
 
+def supprimer_materiel(request, materiel_pk):    
+    materiel = get_object_or_404(Materiel, pk=materiel_pk)
+    materiel.delete()
+    return redirect('/') # Voir pour ajouter un message indiquant la bonne suppression (!)
+       
+
 def creer_compte(request):
     if request.method == 'POST':
         form_user = CreationUser(request.POST)
