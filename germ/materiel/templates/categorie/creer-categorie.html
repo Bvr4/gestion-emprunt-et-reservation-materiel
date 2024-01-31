@@ -5,8 +5,13 @@
     <h2>Créer Catégorie</h2>
     <form method="post" action="/creer-categorie/">
         {% csrf_token %}
-        {{ form }}
-        <button type="submit", name="creer">Ajouter Catégorie</button>
+        {{ form }}        
+        <p>
+            <div class="grid">         
+                <input type=button value="Annuler" onClick="javascript:history.go(-1);" class="secondary">
+                <button type="submit", name="creer">Ajouter Catégorie</button>
+            </div>
+        </p>
     </form>
 </main>
 

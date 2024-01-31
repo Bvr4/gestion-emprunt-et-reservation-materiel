@@ -5,8 +5,13 @@
     <h2>Créer matériel</h2>
     <form method="post" action="/creer-materiel/">
         {% csrf_token %}
-        {{ form }}
-        <button type="submit", name="creer">Ajouter matériel</button>
+        {{ form }}        
+        <p>
+            <div class="grid">         
+                <input type=button value="Annuler" onClick="javascript:history.go(-1);" class="secondary">
+                <button type="submit", name="creer">Ajouter matériel</button>
+            </div>
+        </p>
     </form>
 </main>
 
