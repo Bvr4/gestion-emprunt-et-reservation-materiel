@@ -38,6 +38,10 @@ def index(request):
     context['materiels_reserves'] = materiels_reserves
     context['materiels_empruntes'] = materiels_empruntes
 
+    # utilisateur actuellement connecté
+    if request.user.is_authenticated:
+        context['utilisateur'] = get_object_or_404(Utilisateur, user=request.user)
+
     return render(request, 'materiel/index.html', context=context)
 
 
@@ -215,8 +219,14 @@ def creer_commentaire_bouton(request, materiel_pk):
 
 
 def categories(request):
-    categories = Categorie.objects.order_by('nom')    
-    return render(request, 'categorie/categories.html', {'categories':categories})
+    context = {}
+    context['categories'] = Categorie.objects.order_by('nom')
+
+    # utilisateur actuellement connecté
+    if request.user.is_authenticated:
+        context['utilisateur'] = get_object_or_404(Utilisateur, user=request.user)
+
+    return render(request, 'categorie/categories.html', context=context)
 
 
 def categorie(request, categorie_pk):

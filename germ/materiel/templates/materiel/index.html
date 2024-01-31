@@ -18,7 +18,9 @@
             {% include 'materiel/materiel-liste.html' with materiel=materiel reserve=materiels_reserves|get_item:materiel.id emprunte=materiels_empruntes|get_item:materiel.id %}
         {% endfor %}
     </table>
-    <a href="{% url 'creer-materiel' %}"><button>Ajouter un nouvel élément</button></a>
+    {% if utilisateur.est_moderateur %}
+        <a href="{% url 'creer-materiel' %}"><button>Ajouter un nouvel élément</button></a> 
+    {% endif %}
 </main>
 
 {% endblock content %}

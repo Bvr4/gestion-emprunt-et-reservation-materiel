@@ -18,7 +18,9 @@
             </tr>
         {% endfor %}
     </table>
-    <a href="{% url 'creer-categorie' %}"><button>Ajouter un nouvel élément</button></a>
+    {% if utilisateur.est_moderateur %}
+        <a href="{% url 'creer-categorie' %}"><button>Ajouter un nouvel élément</button></a>
+    {% endif %}
 </main>
 
 {% endblock content %}
