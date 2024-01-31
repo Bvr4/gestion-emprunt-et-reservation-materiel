@@ -19,7 +19,7 @@
             </p>
 
             {% if utilisateur.peut_emprunter and utilisateur.pk == reservation_en_cours.utilisateur.pk %}
-                {% include 'materiel/emprunter-materiel-bouton.html' with emprunt=reservation_en_cours %}
+                {% include 'materiel/fiche_materiel/emprunter-materiel-bouton.html' with emprunt=reservation_en_cours %}
             {% endif %}
         {% endif %}
 
@@ -73,7 +73,7 @@
             <p>Aucune réservation passée pour ce matériel.</p>
         {% endif %}
         {% if utilisateur.peut_emprunter and materiel.empruntable %}
-            {% include 'materiel/reserver-materiel-bouton.html' with materiel=materiel %}
+            {% include 'materiel/fiche_materiel/reserver-materiel-bouton.html' with materiel=materiel %}
         {% endif %}
     </section>
 
@@ -81,10 +81,10 @@
         <h2>Commentaires</h2>
         <p>Donnez ici des informations sur le suivi du matériel (pannes, entretiens réalisés, frais éventuels...)</p>
                
-        {% include 'materiel/creer-commentaire-bouton.html' with materiel=materiel %}
+        {% include 'materiel/fiche_materiel/creer-commentaire-bouton.html' with materiel=materiel %}
 
         {% for commentaire in commentaires %}
-            {% include 'materiel/commentaire.html' with commentaire=commentaire %}
+            {% include 'materiel/fiche_materiel/commentaire.html' with commentaire=commentaire %}
         {% endfor %}
 
     </section>

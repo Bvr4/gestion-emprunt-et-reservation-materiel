@@ -1,0 +1,11 @@
+{% extends 'materiel/base.html' %} 
+{% block content %}
+
+<header class="container">
+    <h1>{{ categorie.prefixe_identifiant }} - {{ categorie.nom }}</h1>
+    {% if utilisateur.est_moderateur %}
+        <a href="{% url 'editer-categorie' categorie.pk %}"><button>Editer les informations</button></a>
+    {% endif %}
+</header>
+
+{% endblock content %}

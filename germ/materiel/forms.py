@@ -84,3 +84,9 @@ class CreerCommentaire(forms.ModelForm):
     class Meta:
         model = Commentaire
         fields = ["titre", "texte"]
+
+
+class CreerCategorie(forms.ModelForm):
+    class Meta:
+        model = Categorie
+        fields = ["nom", "prefixe_identifiant"]

@@ -3,6 +3,7 @@ from django.urls import include, path
 import materiel.views as mviews
 
 urlpatterns = [
+    path('admin/', admin.site.urls),
     path('', include('django.contrib.auth.urls')),
     path('creer-compte', mviews.creer_compte, name='creer-compte'),
     path('', mviews.index, name='home'),
@@ -17,5 +18,7 @@ urlpatterns = [
     path('creer-commentaire/<int:materiel_pk>', mviews.creer_commentaire, name='creer-commentaire'),
     path('creer-commentaire-bouton/<int:materiel_pk>', mviews.creer_commentaire_bouton, name='creer-commentaire-bouton'),
     path('get-prochain-identifiant/', mviews.get_prochain_identifiant, name='get-prochain-identifiant'),
-    path('admin/', admin.site.urls),
+    path('categories', mviews.categories, name='categories'),
+    path('categorie/<int:categorie_pk>', mviews.categorie, name='categorie'),
+    path('creer-categorie/', mviews.creer_categorie, name='creer-categorie'),
 ]

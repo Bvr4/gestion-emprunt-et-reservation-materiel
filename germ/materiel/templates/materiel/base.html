@@ -23,7 +23,21 @@
                     Connecté en tant que {{user.username}}
                 </li>
                 <li>
-                    <a href="/logout">Se déconnecter</a>
+
+                <details role="list" dir="rtl">
+                    <summary aria-haspopup="listbox" role="link"></summary>
+                    <ul role="listbox">
+                    <li>
+                        <a href="/">Matériel</a>
+                    </li>
+                    <li>
+                        <a href="/categories">Catégories</a>
+                    </li>
+                    <li>
+                        <a href="/logout">Se déconnecter</a>
+                    </li>
+                    </ul>
+                </details>
                 </li>
                 {% else %}
                 <li>

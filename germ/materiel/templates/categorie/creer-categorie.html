@@ -1,0 +1,13 @@
+{% extends 'materiel/base.html' %} 
+{% block content %}
+
+<main class="container">
+    <h2>Créer Catégorie</h2>
+    <form method="post" action="/creer-categorie/">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit", name="creer">Ajouter Catégorie</button>
+    </form>
+</main>
+
+{% endblock content %}

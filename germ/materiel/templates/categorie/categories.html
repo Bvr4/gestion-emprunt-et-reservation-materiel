@@ -1,0 +1,24 @@
+{% extends 'materiel/base.html' %} 
+{% block content %}
+
+<main class="container">
+    <h2>Liste des catégories</h2>
+    <p>
+        Cliquez sur un élément pour voir ses informations.
+    </p>
+    <table>
+        <tr>
+            <th><b>Nom</b></th>
+            <th><b>Préfixe</b></th>
+        </tr>
+        {% for categorie in categories %}
+            <tr>
+                <th><a href="{% url 'categorie' categorie.pk %}">{{ categorie.nom }}</a></th>
+                <th>{{ categorie.prefixe_identifiant }}</th>
+            </tr>
+        {% endfor %}
+    </table>
+    <a href="{% url 'creer-categorie' %}"><button>Ajouter un nouvel élément</button></a>
+</main>
+
+{% endblock content %}

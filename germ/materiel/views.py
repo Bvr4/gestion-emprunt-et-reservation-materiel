@@ -5,7 +5,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User, Group
 from django.utils import timezone
 from materiel.models import Emplacement, Categorie, Materiel, Emprunt, Utilisateur, Commentaire
-from materiel.forms import CreerMateriel, EditerMateriel, CreationUtilisateur, CreationUser, ReserverMateriel, CreerCommentaire
+from materiel.forms import CreerMateriel, EditerMateriel, CreationUtilisateur, CreationUser, ReserverMateriel, CreerCommentaire, CreerCategorie
 from .utils import get_utilisateur_data, prochain_id_materiel
 
 
@@ -67,7 +67,7 @@ def materiel(request, materiel_pk):
 
     if request.user.is_authenticated:
         context['utilisateur'] = get_object_or_404(Utilisateur, user=request.user)
-    return render(request, 'materiel/materiel.html', context=context)
+    return render(request, 'materiel/fiche_materiel/materiel.html', context=context)
 
 
 def creer_materiel(request):
@@ -138,12 +138,12 @@ def reserver_materiel(request, materiel_pk):
     else:
         form = ReserverMateriel(initial={'materiel':materiel})
 
-    return render(request, 'materiel/reserver-materiel.html', {'form':form, 'materiel':materiel})
+    return render(request, 'materiel/fiche_materiel/reserver-materiel.html', {'form':form, 'materiel':materiel})
 
 
 def reserver_materiel_bouton(request, materiel_pk):
     materiel = get_object_or_404(Materiel, pk=materiel_pk)
-    return render(request, 'materiel/reserver-materiel-bouton.html', {'materiel':materiel})
+    return render(request, 'materiel/fiche_materiel/reserver-materiel-bouton.html', {'materiel':materiel})
 
 
 def utilisateur(request, utilisateur_pk):
@@ -154,7 +154,7 @@ def utilisateur(request, utilisateur_pk):
     # utilisateur actuellement connecté
     if request.user.is_authenticated:
         context['utilisateur'] = get_object_or_404(Utilisateur, user=request.user)
-    return render(request, 'materiel/utilisateur.html', context)
+    return render(request, 'utilisateur/utilisateur.html', context)
 
 
 def utilisateur_peut_emprunter(request, utilisateur_pk):
@@ -171,7 +171,7 @@ def utilisateur_peut_emprunter(request, utilisateur_pk):
     if request.user.is_authenticated:
         utilisateur = get_object_or_404(Utilisateur, user=request.user)
 
-    return render(request, 'materiel/utilisateur-peut-emprunter.html', {'utilisateur_fiche':utilisateur_fiche, 'utilisateur':utilisateur})
+    return render(request, 'utilisateur/utilisateur-peut-emprunter.html', {'utilisateur_fiche':utilisateur_fiche, 'utilisateur':utilisateur})
 
 
 def emprunter_materiel_bouton(request, emprunt_pk):
@@ -190,7 +190,7 @@ def emprunter_materiel_bouton(request, emprunt_pk):
             emprunt.cloture = True
             emprunt.save()
 
-    return render(request, 'materiel/emprunter-materiel-bouton.html', {'emprunt':emprunt})
+    return render(request, 'materiel/fiche_materiel/emprunter-materiel-bouton.html', {'emprunt':emprunt})
 
 
 def creer_commentaire(request, materiel_pk):
@@ -203,12 +203,33 @@ def creer_commentaire(request, materiel_pk):
             commentaire.materiel = materiel
             commentaire.date = timezone.now()
             commentaire.save()
-            return render(request, 'materiel/commentaire.html', {'commentaire':commentaire, 'materiel':materiel, 'nouveau_commentaire':True})
+            return render(request, 'materiel/fiche_materiel/commentaire.html', {'commentaire':commentaire, 'materiel':materiel, 'nouveau_commentaire':True})
     else:
         form = CreerCommentaire()
-    return render(request, 'materiel/creer-commentaire.html', {'form':form, 'materiel':materiel})
+    return render(request, 'materiel/fiche_materiel/creer-commentaire.html', {'form':form, 'materiel':materiel})
 
 
 def creer_commentaire_bouton(request, materiel_pk):
     materiel = get_object_or_404(Materiel, pk=materiel_pk)
-    return render(request, 'materiel/creer-commentaire-bouton.html', {'materiel':materiel})
+    return render(request, 'materiel/fiche_materiel/creer-commentaire-bouton.html', {'materiel':materiel})
+
+
+def categories(request):
+    categories = Categorie.objects.order_by('nom')    
+    return render(request, 'categorie/categories.html', {'categories':categories})
+
+
+def categorie(request, categorie_pk):
+    categorie = get_object_or_404(Categorie, pk=categorie_pk)    
+    return render(request, 'categorie/categorie.html', {'categorie':categorie})
+
+
+def creer_categorie(request):
+    if request.method == "POST":
+        form = CreerCategorie(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/categories')
+    else:
+        form = CreerCategorie()
+    return render(request, 'categorie/creer-categorie.html', {'form':form})
