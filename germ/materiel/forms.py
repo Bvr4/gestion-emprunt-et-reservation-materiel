@@ -19,7 +19,6 @@ class CreerMateriel(forms.ModelForm):
         if "initial" in kwargs and "identifiant" in kwargs["initial"]:
             self.fields["identifiant"].initial = kwargs["initial"]["identifiant"]
 
-
     def clean(self):
         cleaned_data = super().clean() 
 

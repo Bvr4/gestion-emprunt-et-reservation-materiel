@@ -1,3 +1,4 @@
+import datetime as dt
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
@@ -62,6 +63,11 @@ class Emprunt(models.Model):
     utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
 
     def clean(self):
+        date_du_jour = dt.date.today()
+
+        if self.date_fin_resa < date_du_jour:
+            raise ValidationError({"date_fin_resa": "La date de fin de réservation ne peut être antérieure à la date du jour"})
+        
         if self.date_fin_resa < self.date_debut_resa: 
             raise ValidationError("La date de fin de reservation doit être ultérieure à la date de début de réservation")
         
