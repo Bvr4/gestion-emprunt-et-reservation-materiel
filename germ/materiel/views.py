@@ -57,8 +57,7 @@ def materiel(request, materiel_pk):
     context['reservation_en_cours'] = Emprunt.objects.filter(
         materiel=context['materiel'],
         cloture=False,
-        date_debut_resa__lte=date_du_jour,
-        date_fin_resa__gte=date_du_jour 
+        date_debut_resa__lte=date_du_jour
     ).first()
 
     context['reservation_passees'] = Emprunt.objects.filter(
@@ -241,7 +240,7 @@ def categories(request):
 
 def categorie(request, categorie_pk):
     date_du_jour = dt.date.today()
-    
+
     context = {}
     context['categorie'] = get_object_or_404(Categorie, pk=categorie_pk)   
     context['materiels'] = Materiel.objects.filter(categorie=context['categorie']).order_by('identifiant') 

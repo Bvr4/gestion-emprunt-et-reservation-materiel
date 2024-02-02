@@ -1,8 +1,8 @@
 <div>
     {% if emprunt.date_debut_emprunt is not None and emprunt.date_fin_emprunt is not None %}
-        Vous avez signalé l'emprunt de ce matériel le {{ emprunt.date_debut_emprunt }}, et son retour le {{ emprunt.date_fin_emprunt }}
+        <p>Vous avez signalé l'emprunt de ce matériel le {{ emprunt.date_debut_emprunt }}, et son retour le {{ emprunt.date_fin_emprunt }}</p>
     {% elif emprunt.date_debut_emprunt is None and not emprunt.cloture %}
-        Vous avez une réservation en cours sur ce matériel, vous pouvez procéder à son emprunt. Pensez à le signaler en cliquant sur le bouton ci-dessous.
+        <p>Vous avez une réservation en cours sur ce matériel, vous pouvez procéder à son emprunt. Pensez à le signaler en cliquant sur le bouton ci-dessous.</p>
         <form method="post">
             {% csrf_token %}
             <button type="submit" name="action_emprunt" value="emprunter"
@@ -19,7 +19,7 @@
             hx-swap="outerHTML">Annuler l'emprunt</button>
         </form>
     {% elif emprunt.date_debut_emprunt is not None and emprunt.date_fin_emprunt is None %}
-        Vous avez signalé l'emprunt de ce matériel le {{emprunt.date_debut_emprunt}}. Lors du retour du matériel, pensez à le signaler en cliquant sur le bouton ci-dessous.
+        <p>Vous avez signalé l'emprunt de ce matériel le {{emprunt.date_debut_emprunt}}. Lors du retour du matériel, pensez à le signaler en cliquant sur le bouton ci-dessous.</p>
         <form method="post">
             {% csrf_token %}
             <button type="submit" name="action_emprunt" value="retourner"
