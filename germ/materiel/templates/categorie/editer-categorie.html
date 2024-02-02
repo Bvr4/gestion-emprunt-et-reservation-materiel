@@ -1,0 +1,20 @@
+{% extends 'materiel/base.html' %} 
+{% block content %}
+<main class="container">
+    <h2>Editer catégorie</h2>
+    <form method="post" action="/editer-categorie/{{categorie.pk}}">
+        {% csrf_token %}
+        {{ form }}
+        <p>
+            <div class="grid">         
+                <input type=button value="Annuler" onClick="javascript:history.go(-1);" class="secondary">
+                <button type="submit", name="creer">Enregistrer</button>
+            </div>
+        </p>
+    </form>
+    <form>     
+        {% csrf_token %}   
+        <button class="outline secondary" hx-target="closest body" hx-post="{% url 'supprimer-categorie' categorie.pk %}" hx-confirm="Etes vous sur de vouloir supprimer la catégorie ?">Supprimer</button> 
+    </form>
+</main>
+{% endblock content %}

@@ -1,0 +1,25 @@
+{% load static %}
+{% if messages %}
+<script src="{% static 'materiel/modal.js' %}"></script>
+{% for message in messages %}
+<dialog open id="modal-message">
+    <article>
+        <a href="#close"
+            aria-label="Close"
+            class="close"
+            data-target="modal-message"
+            onClick="toggleModal(event)">
+        </a>
+        <p>
+            {{ message }}
+        </p>
+        <footer>            
+            <a href="#confirm"
+            role="button"
+            data-target="modal-message"
+            onClick="toggleModal(event)">Fermer</a>
+        </footer>
+    </article>
+    </dialog>
+{% endfor %}
+{% endif %}

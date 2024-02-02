@@ -90,3 +90,9 @@ class CreerCategorie(forms.ModelForm):
     class Meta:
         model = Categorie
         fields = ["nom", "prefixe_identifiant"]
+
+
+class EditerCategorie(forms.ModelForm):
+    class Meta:
+        model = Categorie
+        fields = ["nom", "prefixe_identifiant"]

@@ -4,8 +4,10 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User, Group
 from django.utils import timezone
+from django.urls import reverse
+from django.contrib import messages
 from materiel.models import Emplacement, Categorie, Materiel, Emprunt, Utilisateur, Commentaire
-from materiel.forms import CreerMateriel, EditerMateriel, CreationUtilisateur, CreationUser, ReserverMateriel, CreerCommentaire, CreerCategorie
+from materiel.forms import CreerMateriel, EditerMateriel, CreationUtilisateur, CreationUser, ReserverMateriel, CreerCommentaire, CreerCategorie, EditerCategorie
 from .utils import get_utilisateur_data, prochain_id_materiel
 
 
@@ -113,8 +115,10 @@ def editer_materiel(request, materiel_pk):
 
 def supprimer_materiel(request, materiel_pk):    
     materiel = get_object_or_404(Materiel, pk=materiel_pk)
+    nom_materiel = materiel.nom
     materiel.delete()
-    return redirect('/') # Voir pour ajouter un message indiquant la bonne suppression (!)
+    messages.success(request, f'Le matériel "{nom_materiel}" a été supprimé.')
+    return redirect('/') 
        
 
 def creer_compte(request):
@@ -236,8 +240,12 @@ def categories(request):
 
 
 def categorie(request, categorie_pk):
-    categorie = get_object_or_404(Categorie, pk=categorie_pk)    
-    return render(request, 'categorie/categorie.html', {'categorie':categorie})
+    context = {}
+    context['categorie'] = get_object_or_404(Categorie, pk=categorie_pk)    
+
+    if request.user.is_authenticated:
+        context['utilisateur'] = get_object_or_404(Utilisateur, user=request.user)
+    return render(request, 'categorie/categorie.html', context=context)
 
 
 def creer_categorie(request):
@@ -249,3 +257,41 @@ def creer_categorie(request):
     else:
         form = CreerCategorie()
     return render(request, 'categorie/creer-categorie.html', {'form':form})
+
+
+def editer_categorie(request, categorie_pk):
+    categorie_a_editer = get_object_or_404(Categorie, pk=categorie_pk)
+    ancien_prefixe = categorie_a_editer.prefixe_identifiant
+    if request.method == "POST":
+        form = EditerCategorie(request.POST)
+        if form.is_valid():
+            categorie_a_editer = form.save(commit=False)
+            categorie_a_editer.pk = categorie_pk
+            categorie_a_editer.save()
+
+            if categorie_a_editer.prefixe_identifiant != ancien_prefixe:
+                #  Mise à jour des identifiants des matériels de la catégorie, pour que le préfixe corresponde à la nouvelle valeur
+                len_ancien_prefixe = len(ancien_prefixe)
+                materiels = Materiel.objects.filter(categorie=categorie_a_editer)
+
+                for materiel in materiels:
+                    nouvel_identifiant = categorie_a_editer.prefixe_identifiant + materiel.identifiant[len_ancien_prefixe:]
+                    Materiel.objects.filter(pk=materiel.pk).update(identifiant=nouvel_identifiant)
+
+            return redirect(categorie, categorie_pk=categorie_pk)
+    else:
+        form = EditerCategorie(instance=categorie_a_editer)
+    return render(request, 'categorie/editer-categorie.html', {'form':form, 'categorie':categorie_a_editer})
+
+
+def supprimer_categorie(request, categorie_pk):    
+    categorie = get_object_or_404(Categorie, pk=categorie_pk)
+
+    if Materiel.objects.filter(categorie=categorie).exists():
+        messages.error(request, "Vous ne pouvez pas supprimer cette catégorie car des matériels y sont associés.")
+        return redirect(reverse(editer_categorie, args=[categorie_pk]))
+
+    nom_categorie = categorie.nom
+    categorie.delete()
+    messages.success(request, f'La catégorie "{nom_categorie}" a été supprimé.')
+    return redirect('categorie/categories.html') # Voir pour ajouter un message indiquant la bonne suppression (!)

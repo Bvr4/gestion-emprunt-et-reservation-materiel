@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr"></html>
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
     <link rel="stylesheet" type="text/css" href="{% static 'materiel/style.css' %}"/>
@@ -10,6 +10,8 @@
     <title>GERM</title>
 </head>
 <body>   
+
+    {% include 'includes/messages.html' %}
     <div class="hero" data-theme="dark">
         <nav class="container-fluid">
             <ul>
