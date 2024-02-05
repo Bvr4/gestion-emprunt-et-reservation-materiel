@@ -1,0 +1,31 @@
+{% extends 'materiel/base.html' %} 
+{% load get_item %}
+{% block content %}
+
+<header class="container">
+    <h1>{{ emplacement.nom }} ({{ emplacement.commune }})</h1>
+    {% if utilisateur.est_moderateur %}
+        <a href="{% url 'editer-emplacement' emplacement.pk %}"><button>Editer les informations</button></a>
+    {% endif %}
+</header>
+
+<main class="container">
+    <h2>Liste du matériel</h2>
+    <p>
+        Cliquez sur un élément pour voir ses informations et procéder à sa réservation.
+    </p>
+    <table>
+        <tr>
+            <th><b>Nom</b></th>
+            <th><b>Identifiant</b></th>
+            <th><b>Catégorie</b></th>
+            <th><b>Etat</b></th>
+        </tr>
+        {% for materiel in materiels %}
+            {% include 'materiel/materiel-liste.html' with materiel=materiel reserve=materiels_reserves|get_item:materiel.id emprunte=materiels_empruntes|get_item:materiel.id %}
+        {% endfor %}
+    </table>
+        
+</main>
+
+{% endblock content %}

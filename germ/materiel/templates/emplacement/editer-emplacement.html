@@ -1,8 +1,8 @@
 {% extends 'materiel/base.html' %} 
 {% block content %}
 <main class="container">
-    <h2>Editer la catégorie</h2>
-    <form method="post" action="/editer-categorie/{{categorie.pk}}">
+    <h2>Editer l'emplacement</h2>
+    <form method="post" action="/editer-emplacement/{{emplacement.pk}}">
         {% csrf_token %}
         {{ form }}
         <p>
@@ -14,7 +14,7 @@
     </form>
     <form>     
         {% csrf_token %}   
-        <button class="outline secondary" hx-target="closest body" hx-post="{% url 'supprimer-categorie' categorie.pk %}" hx-confirm="Etes vous sur de vouloir supprimer la catégorie ?">Supprimer</button> 
+        <button class="outline secondary" hx-target="closest body" hx-post="{% url 'supprimer-emplacement' emplacement.pk %}" hx-confirm="Etes vous sur de vouloir supprimer l'emplacement ?">Supprimer</button> 
     </form>
 </main>
 {% endblock content %}

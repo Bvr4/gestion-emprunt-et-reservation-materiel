@@ -1,0 +1,26 @@
+{% extends 'materiel/base.html' %} 
+{% block content %}
+
+<main class="container">
+    <h2>Liste des emplacements</h2>
+    <p>
+        Cliquez sur un élément pour voir ses informations.
+    </p>
+    <table>
+        <tr>
+            <th><b>Nom</b></th>
+            <th><b>Commune</b></th>
+        </tr>
+        {% for emplacement in emplacements %}
+            <tr>
+                <th><a href="{% url 'emplacement' emplacement.pk %}">{{ emplacement.nom }}</a></th>
+                <th>{{ emplacement.commune }}</th>
+            </tr>
+        {% endfor %}
+    </table>
+    {% if utilisateur.est_moderateur %}
+        <a href="{% url 'creer-emplacement' %}"><button>Ajouter un nouvel élément</button></a>
+    {% endif %}
+</main>
+
+{% endblock content %}

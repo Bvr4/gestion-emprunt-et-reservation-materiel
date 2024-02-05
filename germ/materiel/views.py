@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.urls import reverse
 from django.contrib import messages
 from materiel.models import Emplacement, Categorie, Materiel, Emprunt, Utilisateur, Commentaire
-from materiel.forms import CreerMateriel, EditerMateriel, CreationUtilisateur, CreationUser, ReserverMateriel, CreerCommentaire, CreerCategorie, EditerCategorie
+from materiel.forms import CreerMateriel, EditerMateriel, CreationUtilisateur, CreationUser, ReserverMateriel, CreerCommentaire, CreerCategorie, EditerCategorie, CreerEmplacement, EditerEmplacement
 from .utils import get_utilisateur_data, prochain_id_materiel
 
 
@@ -76,7 +76,7 @@ def materiel(request, materiel_pk):
 
 
 def creer_materiel(request):
-    if request.method == "POST":
+    if request.method == 'POST':
         form = CreerMateriel(request.POST)
         if form.is_valid():
             form.save()
@@ -100,7 +100,7 @@ def get_prochain_identifiant(request):
 
 def editer_materiel(request, materiel_pk):
     materiel_a_editer = get_object_or_404(Materiel, pk=materiel_pk)
-    if request.method == "POST":
+    if request.method == 'POST':
         form = EditerMateriel(request.POST)
         if form.is_valid():
             materiel_a_editer = form.save(commit=False)
@@ -135,7 +135,7 @@ def creer_compte(request):
         form_user = CreationUser()
         form_utilisateur = CreationUtilisateur()
 
-    return render(request, 'registration/creer-compte.html', {"form_user":form_user, "form_utilisateur":form_utilisateur})
+    return render(request, 'registration/creer-compte.html', {'form_user':form_user, 'form_utilisateur':form_utilisateur})
 
 
 def reserver_materiel(request, materiel_pk):
@@ -275,7 +275,7 @@ def categorie(request, categorie_pk):
 
 
 def creer_categorie(request):
-    if request.method == "POST":
+    if request.method == 'POST':
         form = CreerCategorie(request.POST)
         if form.is_valid():
             form.save()
@@ -288,7 +288,7 @@ def creer_categorie(request):
 def editer_categorie(request, categorie_pk):
     categorie_a_editer = get_object_or_404(Categorie, pk=categorie_pk)
     ancien_prefixe = categorie_a_editer.prefixe_identifiant
-    if request.method == "POST":
+    if request.method == 'POST':
         form = EditerCategorie(request.POST)
         if form.is_valid():
             categorie_a_editer = form.save(commit=False)
@@ -314,10 +314,95 @@ def supprimer_categorie(request, categorie_pk):
     categorie = get_object_or_404(Categorie, pk=categorie_pk)
 
     if Materiel.objects.filter(categorie=categorie).exists():
-        messages.error(request, "Vous ne pouvez pas supprimer cette catégorie car des matériels y sont associés.")
+        messages.error(request, 'Vous ne pouvez pas supprimer cette catégorie car des matériels y sont associés.')
         return redirect(reverse(editer_categorie, args=[categorie_pk]))
 
     nom_categorie = categorie.nom
     categorie.delete()
     messages.success(request, f'La catégorie "{nom_categorie}" a été supprimé.')
-    return redirect('categorie/categories.html') # Voir pour ajouter un message indiquant la bonne suppression (!)
+    return redirect('/categories') 
+
+
+def emplacements(request):
+    context = {}
+    context['emplacements'] = Emplacement.objects.order_by('nom')
+
+    # utilisateur actuellement connecté
+    if request.user.is_authenticated:
+        context['utilisateur'] = get_object_or_404(Utilisateur, user=request.user)
+
+    return render(request, 'emplacement/emplacements.html', context=context)
+
+
+def emplacement(request, emplacement_pk):
+    date_du_jour = dt.date.today()
+
+    context = {}
+    context['emplacement'] = get_object_or_404(Emplacement, pk=emplacement_pk)   
+    context['materiels'] = Materiel.objects.filter(emplacement=context['emplacement']).order_by('identifiant') 
+
+    materiels_empruntes = {}
+    materiels_reserves = {}
+
+    for materiel in context['materiels']:
+        reservation = Emprunt.objects.filter(
+            materiel=materiel,
+            cloture=False,
+            date_debut_resa__lte=date_du_jour,
+            date_fin_resa__gte=date_du_jour 
+        ).first()
+
+        emprunt = Emprunt.objects.filter(
+            materiel=materiel,
+            cloture=False,
+            date_debut_resa__lte=date_du_jour,
+            date_debut_emprunt__lte=date_du_jour
+        ).first()
+
+        materiels_reserves[materiel.id] = reservation is not None
+        materiels_empruntes[materiel.id] = emprunt is not None
+
+    context['materiels_reserves'] = materiels_reserves
+    context['materiels_empruntes'] = materiels_empruntes
+
+    if request.user.is_authenticated:
+        context['utilisateur'] = get_object_or_404(Utilisateur, user=request.user)
+    return render(request, 'emplacement/emplacement.html', context=context)
+
+
+def creer_emplacement(request):
+    if request.method == "POST":
+        form = CreerEmplacement(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/emplacements')
+    else:
+        form = CreerEmplacement()
+    return render(request, 'emplacement/creer-emplacement.html', {'form':form})
+
+
+def editer_emplacement(request, emplacement_pk):
+    emplacement_a_editer = get_object_or_404(Emplacement, pk=emplacement_pk)
+    if request.method == 'POST':
+        form = EditerEmplacement(request.POST)
+        if form.is_valid():
+            emplacement_a_editer = form.save(commit=False)
+            emplacement_a_editer.pk = emplacement_pk
+            emplacement_a_editer.save()
+            return redirect(emplacement, emplacement_pk=emplacement_pk)
+    else:
+        form = EditerEmplacement(instance=emplacement_a_editer)
+    return render(request, 'emplacement/editer-emplacement.html', {'form':form, 'emplacement':emplacement_a_editer})
+
+
+def supprimer_emplacement(request, emplacement_pk):
+    emplacement = get_object_or_404(Emplacement, pk=emplacement_pk)
+
+    if Materiel.objects.filter(emplacement=emplacement).exists():
+        messages.error(request, 'Vous ne pouvez pas supprimer cette emplacement car des matériels y sont associés.')
+        return redirect(reverse(editer_emplacement, args=[emplacement_pk]))
+
+    nom_emplacement = emplacement.nom
+    emplacement.delete()
+    messages.success(request, f'L\'emplacement "{nom_emplacement}" a été supprimé.')
+    return redirect('/emplacements') 

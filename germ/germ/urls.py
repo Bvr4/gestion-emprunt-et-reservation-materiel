@@ -24,4 +24,9 @@ urlpatterns = [
     path('creer-categorie/', mviews.creer_categorie, name='creer-categorie'),
     path('editer-categorie/<int:categorie_pk>', mviews.editer_categorie, name='editer-categorie'),
     path('supprimer-categorie/<int:categorie_pk>', mviews.supprimer_categorie, name='supprimer-categorie'),
+    path('emplacements', mviews.emplacements, name='emplacements'),
+    path('emplacement/<int:emplacement_pk>', mviews.emplacement, name='emplacement'),
+    path('creer-emplacement/', mviews.creer_emplacement, name='creer-emplacement'),
+    path('editer-emplacement/<int:emplacement_pk>', mviews.editer_emplacement, name='editer-emplacement'),
+    path('supprimer-emplacement/<int:emplacement_pk>', mviews.supprimer_emplacement, name='supprimer-emplacement'),
 ]

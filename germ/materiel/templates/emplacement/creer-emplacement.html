@@ -2,14 +2,14 @@
 {% block content %}
 
 <main class="container">
-    <h2>Créer une catégorie</h2>
-    <form method="post" action="/creer-categorie/">
+    <h2>Créer emplacement</h2>
+    <form method="post" action="/creer-emplacement/">
         {% csrf_token %}
         {{ form }}        
         <p>
             <div class="grid">         
                 <input type=button value="Annuler" onClick="javascript:history.go(-1);" class="secondary">
-                <button type="submit", name="creer">Ajouter catégorie</button>
+                <button type="submit", name="creer">Ajouter emplacement</button>
             </div>
         </p>
     </form>

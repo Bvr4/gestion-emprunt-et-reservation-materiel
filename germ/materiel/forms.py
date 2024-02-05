@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from materiel.models import Materiel, Categorie, Utilisateur, Emprunt, Commentaire
+from materiel.models import Materiel, Categorie, Emplacement, Utilisateur, Emprunt, Commentaire
 
 class CreerMateriel(forms.ModelForm):
     class Meta:
@@ -54,7 +54,7 @@ class CreationUtilisateur(forms.ModelForm):
 
     class Meta:
         model = Utilisateur
-        fields = "numero_telephone", "commune_residence"
+        fields = ["numero_telephone", "commune_residence"]
 
 
 class CreationUser(UserCreationForm):
@@ -89,10 +89,22 @@ class CreerCommentaire(forms.ModelForm):
 class CreerCategorie(forms.ModelForm):
     class Meta:
         model = Categorie
-        fields = ["nom", "prefixe_identifiant"]
+        fields = "__all__"
 
 
 class EditerCategorie(forms.ModelForm):
     class Meta:
         model = Categorie
-        fields = ["nom", "prefixe_identifiant"]
+        fields = "__all__"
+
+
+class CreerEmplacement(forms.ModelForm):
+    class Meta:
+        model = Emplacement
+        fields = "__all__"
+
+
+class EditerEmplacement(forms.ModelForm):
+    class Meta:
+        model = Emplacement
+        fields = "__all__"
