@@ -15,7 +15,12 @@
 
         {% if reservation_en_cours %}
             <p><mark>Réservation en cours :
-                <a href="{% url 'utilisateur' reservation_en_cours.utilisateur.pk %}">{{ reservation_en_cours.utilisateur }},</a> du {{ reservation_en_cours.date_debut_resa }} au {{ reservation_en_cours.date_fin_resa }}</mark>
+                <a href="{% url 'utilisateur' reservation_en_cours.utilisateur.pk %}">{{ reservation_en_cours.utilisateur }},</a>
+                 du {{ reservation_en_cours.date_debut_resa }} au {{ reservation_en_cours.date_fin_resa }}.
+                 {% if reservation_en_cours.date_debut_emprunt %}
+                    Emprunté depuis le {{ reservation_en_cours.date_debut_emprunt }}.
+                 {% endif %}
+                </mark>
             </p>
 
             {% if utilisateur.peut_emprunter and utilisateur.pk == reservation_en_cours.utilisateur.pk %}
