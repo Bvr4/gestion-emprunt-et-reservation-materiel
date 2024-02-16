@@ -21,7 +21,6 @@ class CreerMateriel(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean() 
-
         identifiant = cleaned_data.get("identifiant")
         categorie = cleaned_data.get("categorie")
 
@@ -106,11 +105,37 @@ class CreerCategorie(forms.ModelForm):
         model = Categorie
         fields = "__all__"
 
+    def clean(self):
+        cleaned_data = super().clean() 
+        nom = cleaned_data.get("nom")
+        prefixe_identifiant = cleaned_data.get("prefixe_identifiant")
+
+        if Categorie.objects.filter(nom=nom).exists():
+            raise forms.ValidationError({"nom": "Cette catégorie existe déjà"})
+        
+        if Categorie.objects.filter(prefixe_identifiant=prefixe_identifiant).exists():
+            raise forms.ValidationError({"prefixe_identifiant": "Une autre catégorie porte déjà ce préfixe"})
+        
+        return cleaned_data
+
 
 class EditerCategorie(forms.ModelForm):
     class Meta:
         model = Categorie
         fields = "__all__"
+
+    def clean(self):
+        cleaned_data = super().clean() 
+        nom = cleaned_data.get("nom")
+        prefixe_identifiant = cleaned_data.get("prefixe_identifiant")
+
+        if Categorie.objects.filter(nom=nom).exists():
+            raise forms.ValidationError({"nom": "Cette catégorie existe déjà"})
+        
+        if Categorie.objects.filter(prefixe_identifiant=prefixe_identifiant).exists():
+            raise forms.ValidationError({"prefixe_identifiant": "Une autre catégorie porte déjà ce préfixe"})
+        
+        return cleaned_data
 
 
 class CreerEmplacement(forms.ModelForm):
@@ -118,8 +143,26 @@ class CreerEmplacement(forms.ModelForm):
         model = Emplacement
         fields = "__all__"
 
+    def clean(self):
+        cleaned_data = super().clean() 
+        nom = cleaned_data.get("nom")
+
+        if Emplacement.objects.filter(nom=nom).exists():
+            raise forms.ValidationError({"nom": "Cette emplacement existe déjà"})
+                
+        return cleaned_data
+
 
 class EditerEmplacement(forms.ModelForm):
     class Meta:
         model = Emplacement
         fields = "__all__"
+
+    def clean(self):
+        cleaned_data = super().clean() 
+        nom = cleaned_data.get("nom")
+
+        if Emplacement.objects.filter(nom=nom).exists():
+            raise forms.ValidationError({"nom": "Cette emplacement existe déjà"})
+                
+        return cleaned_data
