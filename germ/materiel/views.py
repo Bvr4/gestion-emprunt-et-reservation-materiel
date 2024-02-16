@@ -198,6 +198,7 @@ def utilisateur_peut_emprunter(request, utilisateur_pk):
 
 def emprunter_materiel_bouton(request, emprunt_pk):
     emprunt = get_object_or_404(Emprunt, pk=emprunt_pk)
+    utilisateur = get_object_or_404(Utilisateur, user=request.user)
     if request.method == 'POST':
         action_emprunt = request.POST.get('action_emprunt', None)
         print (action_emprunt)
@@ -212,12 +213,12 @@ def emprunter_materiel_bouton(request, emprunt_pk):
             emprunt.cloture = True
             emprunt.save()
 
-    return render(request, 'materiel/fiche_materiel/emprunter-materiel-bouton.html', {'emprunt':emprunt})
+    return render(request, 'materiel/fiche_materiel/emprunter-materiel-bouton.html', {'emprunt':emprunt, 'utilisateur':utilisateur})
 
 
 def creer_commentaire(request, materiel_pk):
     materiel = get_object_or_404(Materiel, pk=materiel_pk)
-    if request.method == "POST":
+    if request.method == 'POST':
         form = CreerCommentaire(request.POST)
         if form.is_valid():
             commentaire = form.save(commit=False)
@@ -380,7 +381,7 @@ def emplacement(request, emplacement_pk):
 
 
 def creer_emplacement(request):
-    if request.method == "POST":
+    if request.method == 'POST':
         form = CreerEmplacement(request.POST)
         if form.is_valid():
             form.save()

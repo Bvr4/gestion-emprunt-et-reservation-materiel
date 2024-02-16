@@ -23,7 +23,7 @@
                 </mark>
             </p>
 
-            {% if utilisateur.peut_emprunter and utilisateur.pk == reservation_en_cours.utilisateur.pk %}
+            {% if utilisateur.est_moderateur or utilisateur.peut_emprunter and utilisateur.pk == reservation_en_cours.utilisateur.pk %}
                 {% include 'materiel/fiche_materiel/emprunter-materiel-bouton.html' with emprunt=reservation_en_cours %}
             {% endif %}
         {% endif %}
