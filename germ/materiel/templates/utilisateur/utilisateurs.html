@@ -1,0 +1,33 @@
+{% extends 'materiel/base.html' %} 
+{% block content %}
+
+<main class="container">
+    <h2>Liste des utilisateurs</h2>
+    <p>
+        Cliquez sur un élément pour voir ses informations.
+    </p>
+    <table>
+        <tr>
+            <th><b>Nom</b></th>
+            <th><b>Téléphone</b></th>
+            <th><b>Email</b></th>
+            <th><b>Commune</b></th>
+            <th><b>Modérateur</b></th>
+            <th><b>Emprunt en cours</b></th>
+            <th><b>Réservations en cour</b></th>
+        </tr>
+        {% for utilisateur in utilisateurs %}
+            <tr>
+                <td><a href="{% url 'utilisateur' utilisateur.pk %}">{{ utilisateur.user.first_name }} {{ utilisateur.user.last_name }}</a></td>
+                <td>{{ utilisateur.numero_telephone }}</td>
+                <td>{{ utilisateur.user.email }}</td>
+                <td>{{ utilisateur.commune_residence }}</td>
+                <td>{% if utilisateur.est_moderateur %}Oui{% else %}Non{% endif %}</td>
+                <td>{% if utilisateur.has_emprunts_en_cours %}Oui{% else %}Non{% endif %}</td>
+                <td>{% if utilisateur.has_resa_en_cours %}Oui{% else %}Non{% endif %}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</main>
+
+{% endblock content %}
