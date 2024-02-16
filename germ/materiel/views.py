@@ -357,6 +357,11 @@ def supprimer_categorie(request, categorie_pk):
     messages.success(request, f'La catégorie "{nom_categorie}" a été supprimé.')
     return redirect('/categories') 
 
+def utilisateurs(request):
+    context = {}
+    context['utilisateurs'] = Utilisateur.objects.order_by('user')
+
+    return render(request, 'utilisateur/utilisateurs.html', context=context)
 
 def emplacements(request):
     context = {}
@@ -367,7 +372,6 @@ def emplacements(request):
         context['utilisateur'] = get_object_or_404(Utilisateur, user=request.user)
 
     return render(request, 'emplacement/emplacements.html', context=context)
-
 
 def emplacement(request, emplacement_pk):
     date_du_jour = dt.date.today()
@@ -440,4 +444,4 @@ def supprimer_emplacement(request, emplacement_pk):
     nom_emplacement = emplacement.nom
     emplacement.delete()
     messages.success(request, f'L\'emplacement "{nom_emplacement}" a été supprimé.')
-    return redirect('/emplacements') 
+    return redirect('/emplacements')
