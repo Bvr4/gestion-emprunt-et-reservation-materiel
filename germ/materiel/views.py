@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.urls import reverse
 from django.contrib import messages
 from materiel.models import Emplacement, Categorie, Materiel, Emprunt, Utilisateur, Commentaire
-from materiel.forms import CreerMateriel, EditerMateriel, CreationUtilisateur, CreationUser, ReserverMateriel, CreerCommentaire, CreerCategorie, EditerCategorie, CreerEmplacement, EditerEmplacement
+from materiel.forms import CreerMateriel, EditerMateriel, CreationUtilisateur, CreationUser, ReserverMateriel, ReserverMaterielModerateur, CreerCommentaire, CreerCategorie, EditerCategorie, CreerEmplacement, EditerEmplacement
 from .utils import get_utilisateur_data, prochain_id_materiel
 
 
@@ -140,16 +140,25 @@ def creer_compte(request):
 
 def reserver_materiel(request, materiel_pk):
     materiel = get_object_or_404(Materiel, pk=materiel_pk)
+    utilisateur = get_utilisateur_data(request.user)
+
+    # Si l'utilisateur est modérateur, on charge le formulaire permettant de choisir quel utilisateur procède à la reservation
+    if utilisateur.est_moderateur:
+        form_model = ReserverMaterielModerateur
+    else:
+        form_model = ReserverMateriel
+
     if request.method == 'POST':
-        form = ReserverMateriel(request.POST, initial={'materiel': materiel})
+        form = form_model(request.POST, initial={'materiel': materiel})
         if form.is_valid():
             reservation = form.save(commit=False)
-            reservation.utilisateur = get_utilisateur_data(request.user)
+            if not utilisateur.est_moderateur:
+                reservation.utilisateur = get_utilisateur_data(request.user)
             reservation.save()
             # return render(request, 'materiel/reserver-materiel-bouton.html', {'materiel':materiel, 'reservation':reservation})   # !>> à creuser, je ne suis pas fan du résultat en terme d'UX/UI
             return redirect('materiel', materiel_pk=materiel.pk)
     else:
-        form = ReserverMateriel(initial={'materiel':materiel})
+        form = form_model(initial={'materiel':materiel})
 
     return render(request, 'materiel/fiche_materiel/reserver-materiel.html', {'form':form, 'materiel':materiel})
 

@@ -80,6 +80,21 @@ class ReserverMateriel(forms.ModelForm):
             self.fields["materiel"].widget = forms.HiddenInput()
 
 
+class ReserverMaterielModerateur(forms.ModelForm):
+    date_debut_resa = forms.DateField(label="Date de début de réservation", widget=forms.widgets.DateInput(attrs={"type": "date"}))
+    date_fin_resa = forms.DateField(label="Date de fin de réservation", widget=forms.widgets.DateInput(attrs={"type": "date"}))
+
+    class Meta:
+        model = Emprunt
+        fields = ["utilisateur", "date_debut_resa", "date_fin_resa", "materiel"]
+
+    def __init__(self, *args, **kwargs):
+        super(ReserverMaterielModerateur, self).__init__(*args, **kwargs)
+        if "initial" in kwargs and "materiel" in kwargs["initial"]:
+            self.fields["materiel"].initial = kwargs["initial"]["materiel"]
+            self.fields["materiel"].widget = forms.HiddenInput()
+
+
 class CreerCommentaire(forms.ModelForm):
     class Meta:
         model = Commentaire
