@@ -12,3 +12,19 @@ Une fiche matériel permet d'accéder aux informations du matériel, de procéde
 Django pour le back-end, htmx et picocss pour le front-end.
      
 Projet en cours de développement.
+
+## Mise en place d'un environnement de développement
+
+```git clone https://github.com/Bvr4/gestion-emprunt-et-reservation-materiel  
+pip install -r requirements.txt  
+cd germ/  
+python manage.py runserver  
+```
+
+## Mettre à jour son environnement de développement
+
+```
+git pull --rebase  
+pip install -r requirements.txt  
+python manage.py migrate  
+```
