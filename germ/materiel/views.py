@@ -52,7 +52,6 @@ def materiel(request, materiel_pk):
     context={}
     context['materiel'] = get_object_or_404(Materiel, pk=materiel_pk)
     context['commentaires'] = Commentaire.objects.filter(materiel=context['materiel']).order_by('-date')
-    context['reservations'] = Emprunt.objects.filter(materiel=context['materiel'])
 
     context['reservation_en_cours'] = Emprunt.objects.filter(
         materiel=context['materiel'],
@@ -144,21 +143,47 @@ def reserver_materiel(request, materiel_pk):
 
     # Si l'utilisateur est modérateur, on charge le formulaire permettant de choisir quel utilisateur procède à la reservation
     if utilisateur.est_moderateur:
-        form_model = ReserverMaterielModerateur
+        form_model_resa = ReserverMaterielModerateur
     else:
-        form_model = ReserverMateriel
+        form_model_resa = ReserverMateriel
 
     if request.method == 'POST':
-        form = form_model(request.POST, initial={'materiel': materiel})
+        date_du_jour = dt.date.today()
+        # On recharge tout le contexte pour pouvoir render toute la section reservation
+        context = {}
+        context['materiel'] = materiel
+        context['utilisateur'] = utilisateur
+        
+        context['reservation_en_cours'] = Emprunt.objects.filter(
+            materiel=context['materiel'],
+            cloture=False,
+            date_debut_resa__lte=date_du_jour
+        ).first()
+
+        context['reservation_passees'] = Emprunt.objects.filter(
+            materiel=context['materiel'],
+            date_fin_resa__lt=date_du_jour 
+        ).order_by('-date_fin_resa').all()[:5]
+
+        context['reservation_futures'] = Emprunt.objects.filter(
+            materiel=context['materiel'],
+            date_debut_resa__gt=date_du_jour 
+        ).order_by('date_debut_resa').all()
+
+        form = form_model_resa(request.POST, initial={'materiel': materiel})
+
         if form.is_valid():
             reservation = form.save(commit=False)
             if not utilisateur.est_moderateur:
                 reservation.utilisateur = get_utilisateur_data(request.user)
             reservation.save()
-            # return render(request, 'materiel/reserver-materiel-bouton.html', {'materiel':materiel, 'reservation':reservation})   # !>> à creuser, je ne suis pas fan du résultat en terme d'UX/UI
-            return redirect('materiel', materiel_pk=materiel.pk)
+            return render(request, 'materiel/fiche_materiel/section-reservation.html', context=context)
+        else:
+            context['formulaire_resa'] = form
+            return render(request, 'materiel/fiche_materiel/section-reservation.html', context=context)
+
     else:
-        form = form_model(initial={'materiel':materiel})
+        form = form_model_resa(initial={'materiel':materiel})
 
     return render(request, 'materiel/fiche_materiel/reserver-materiel.html', {'form':form, 'materiel':materiel})
 
