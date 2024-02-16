@@ -153,7 +153,7 @@ def reserver_materiel(request, materiel_pk):
         context = {}
         context['materiel'] = materiel
         context['utilisateur'] = utilisateur
-        
+
         context['reservation_en_cours'] = Emprunt.objects.filter(
             materiel=context['materiel'],
             cloture=False,
@@ -177,6 +177,8 @@ def reserver_materiel(request, materiel_pk):
             if not utilisateur.est_moderateur:
                 reservation.utilisateur = get_utilisateur_data(request.user)
             reservation.save()
+            if reservation.date_debut_resa <= date_du_jour:
+                context['reservation_en_cours'] = reservation
             return render(request, 'materiel/fiche_materiel/section-reservation.html', context=context)
         else:
             context['formulaire_resa'] = form
