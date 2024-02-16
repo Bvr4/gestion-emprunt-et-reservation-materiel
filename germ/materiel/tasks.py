@@ -53,8 +53,3 @@ def rappel_fin_de_reservation_depassee():
             "from@example.com", # à modifier avant mise en prod
             [email_dest],
         )
-
-import datetime as dt
-date_du_jour = dt.date.today()
-
-Emprunt.objects.filter(cloture = False, date_fin_resa__lte = date_du_jour, date_debut_emprunt__isnull = True, date_fin_emprunt__isnull = False).all()    
