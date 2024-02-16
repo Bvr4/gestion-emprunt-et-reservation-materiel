@@ -42,9 +42,9 @@
             </tr>
             {% for reservation in reservation_futures %}
                 <tr>
-                    <th><a href="{% url 'utilisateur' reservation.utilisateur.pk %}">{{ reservation.utilisateur }}</a></th>
-                    <th>{{ reservation.date_debut_resa }}</th>
-                    <th>{{ reservation.date_fin_resa }}</th>
+                    <td><a href="{% url 'utilisateur' reservation.utilisateur.pk %}">{{ reservation.utilisateur }}</a></td>
+                    <td>{{ reservation.date_debut_resa }}</td>
+                    <td>{{ reservation.date_fin_resa }}</td>
                 </tr>
             {% endfor %}
             </table>
@@ -65,12 +65,12 @@
             </tr>
             {% for reservation in reservation_passees %}
                 <tr>
-                    <th><a href="{% url 'utilisateur' reservation.utilisateur.pk %}">{{ reservation.utilisateur }}</a></th>
-                    <th>{{ reservation.date_debut_resa }}</th>
-                    <th>{{ reservation.date_fin_resa }}</th>
-                    <th>{{ reservation.date_debut_emprunt|default_if_none:"-" }}</th>
-                    <th>{{ reservation.date_fin_emprunt|default_if_none:"-" }}</th>
-                    <th>{% if reservation.cloture %}Oui{% else %}Non{% endif %}</th>
+                    <td><a href="{% url 'utilisateur' reservation.utilisateur.pk %}">{{ reservation.utilisateur }}</a></td>
+                    <td>{{ reservation.date_debut_resa }}</td>
+                    <td>{{ reservation.date_fin_resa }}</td>
+                    <td>{{ reservation.date_debut_emprunt|default_if_none:"-" }}</td>
+                    <td>{{ reservation.date_fin_emprunt|default_if_none:"-" }}</td>
+                    <td>{% if reservation.cloture %}Oui{% else %}Non{% endif %}</td>
                 </tr>
             {% endfor %}
             </table>

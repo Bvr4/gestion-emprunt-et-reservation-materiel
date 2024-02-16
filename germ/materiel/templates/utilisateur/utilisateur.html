@@ -24,12 +24,12 @@
             </tr>
         {% for emprunt in emprunts %}
             <tr>
-                <th>{{ emprunt.materiel }}</th>
-                <th>{{ emprunt.date_debut_resa }}</th>
-                <th>{{ emprunt.date_fin_resa }}</th>
-                <th>{{ emprunt.date_debut_emprunt|default_if_none:"-" }}</th>
-                <th>{{ emprunt.date_fin_emprunt|default_if_none:"-" }}</th>
-                <th>{% if emprunt.cloture %}Oui{% else %}Non{% endif %}</th>
+                <td><a href="{% url 'materiel' emprunt.materiel.pk %}">{{ emprunt.materiel }}</a></td>
+                <td>{{ emprunt.date_debut_resa }}</td>
+                <td>{{ emprunt.date_fin_resa }}</td>
+                <td>{{ emprunt.date_debut_emprunt|default_if_none:"-" }}</td>
+                <td>{{ emprunt.date_fin_emprunt|default_if_none:"-" }}</td>
+                <td>{% if emprunt.cloture %}Oui{% else %}Non{% endif %}</td>
             </tr>
         {% endfor %}
         </table>

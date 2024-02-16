@@ -13,8 +13,8 @@
         </tr>
         {% for categorie in categories %}
             <tr>
-                <th><a href="{% url 'categorie' categorie.pk %}">{{ categorie.nom }}</a></th>
-                <th>{{ categorie.prefixe_identifiant }}</th>
+                <td><a href="{% url 'categorie' categorie.pk %}">{{ categorie.nom }}</a></td>
+                <td>{{ categorie.prefixe_identifiant }}</td>
             </tr>
         {% endfor %}
     </table>

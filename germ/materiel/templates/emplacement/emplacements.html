@@ -13,8 +13,8 @@
         </tr>
         {% for emplacement in emplacements %}
             <tr>
-                <th><a href="{% url 'emplacement' emplacement.pk %}">{{ emplacement.nom }}</a></th>
-                <th>{{ emplacement.commune }}</th>
+                <td><a href="{% url 'emplacement' emplacement.pk %}">{{ emplacement.nom }}</a></td>
+                <td>{{ emplacement.commune }}</td>
             </tr>
         {% endfor %}
     </table>
