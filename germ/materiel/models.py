@@ -70,22 +70,18 @@ class Utilisateur(models.Model):
 
     # Permet de tester si un utilisateur a des emprunts en cours
     def has_emprunts_en_cours(self):
-        emprunts = Emprunt.objects.filter(utilisateur=self).all()
-        for emprunt in emprunts:
-            if emprunt.date_debut_emprunt and not emprunt.date_fin_emprunt:
-                return True
-
+        if Emprunt.objects.filter(utilisateur=self, cloture=False,
+            date_debut_emprunt__isnull=False,
+            date_fin_emprunt__isnull=True).exists():
+            return True
         return False
 
     # Teste si l'utilisateur à des réservation en cours ou dans le futur
     def has_resa_en_cours(self):
-        emprunts = Emprunt.objects.filter(utilisateur=self).all()
-        for emprunt in emprunts:
-            now = dt.datetime.now().date()
-            if emprunt.date_debut_resa <= now <= emprunt.date_fin_resa:
-                if emprunt.cloture == False:
-                    return True
-
+        date_du_jour = dt.date.today()
+        if Emprunt.objects.filter(utilisateur=self, cloture=False,
+            date_debut_resa__lte=date_du_jour).exists():
+            return True
         return False
 
 # Emprunt et réservation d'un matériel par un usager
