@@ -36,7 +36,24 @@ class Materiel(models.Model):
     # permet d'avoir le nom visible dans l'interface d'admin django
     def __str__(self) -> str:
         return self.nom
-
+    
+    # Permet de savoir si le matériel est actuellement réservé
+    def est_reserve(self):
+        date_du_jour = dt.date.today()
+        if Emprunt.objects.filter(materiel=self, cloture=False,
+            date_debut_resa__lte=date_du_jour).exists():
+            return True
+        return False
+        
+    # Permet de savoir si le matériel est actuellement emprunté
+    def est_emprunte(self):
+        date_du_jour = dt.date.today()
+        if Emprunt.objects.filter(materiel=self, cloture=False,            
+            date_debut_resa__lte=date_du_jour,
+            date_debut_emprunt__lte=date_du_jour).exists():
+            return True
+        return False
+    
 
 # Utilisateur
 class Utilisateur(models.Model):

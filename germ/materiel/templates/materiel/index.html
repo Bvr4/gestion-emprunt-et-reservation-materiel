@@ -1,5 +1,4 @@
 {% extends 'materiel/base.html' %} 
-{% load get_item %}
 {% block content %}
 
 <main class="container">
@@ -15,7 +14,7 @@
             <th><b>Etat</b></th>
         </tr>
         {% for materiel in materiels %}
-            {% include 'materiel/materiel-liste.html' with materiel=materiel reserve=materiels_reserves|get_item:materiel.id emprunte=materiels_empruntes|get_item:materiel.id %}
+            {% include 'materiel/materiel-liste.html' %}
         {% endfor %}
     </table>
     {% if utilisateur.est_moderateur %}

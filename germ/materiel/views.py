@@ -12,34 +12,9 @@ from .utils import get_utilisateur_data, prochain_id_materiel
 
 
 def index(request):
-    date_du_jour = dt.date.today()
     context={}
     context['materiels'] = Materiel.objects.order_by('identifiant')
     
-    materiels_empruntes = {}
-    materiels_reserves = {}
-
-    for materiel in context['materiels']:
-        reservation = Emprunt.objects.filter(
-            materiel=materiel,
-            cloture=False,
-            date_debut_resa__lte=date_du_jour,
-            date_fin_resa__gte=date_du_jour 
-        ).first()
-
-        emprunt = Emprunt.objects.filter(
-            materiel=materiel,
-            cloture=False,
-            date_debut_resa__lte=date_du_jour,
-            date_debut_emprunt__lte=date_du_jour
-        ).first()
-
-        materiels_reserves[materiel.id] = reservation is not None
-        materiels_empruntes[materiel.id] = emprunt is not None
-
-    context['materiels_reserves'] = materiels_reserves
-    context['materiels_empruntes'] = materiels_empruntes
-
     # utilisateur actuellement connecté
     if request.user.is_authenticated:
         context['utilisateur'] = get_object_or_404(Utilisateur, user=request.user)
@@ -276,35 +251,9 @@ def categories(request):
 
 
 def categorie(request, categorie_pk):
-    date_du_jour = dt.date.today()
-
     context = {}
     context['categorie'] = get_object_or_404(Categorie, pk=categorie_pk)   
     context['materiels'] = Materiel.objects.filter(categorie=context['categorie']).order_by('identifiant') 
-
-    materiels_empruntes = {}
-    materiels_reserves = {}
-
-    for materiel in context['materiels']:
-        reservation = Emprunt.objects.filter(
-            materiel=materiel,
-            cloture=False,
-            date_debut_resa__lte=date_du_jour,
-            date_fin_resa__gte=date_du_jour 
-        ).first()
-
-        emprunt = Emprunt.objects.filter(
-            materiel=materiel,
-            cloture=False,
-            date_debut_resa__lte=date_du_jour,
-            date_debut_emprunt__lte=date_du_jour
-        ).first()
-
-        materiels_reserves[materiel.id] = reservation is not None
-        materiels_empruntes[materiel.id] = emprunt is not None
-
-    context['materiels_reserves'] = materiels_reserves
-    context['materiels_empruntes'] = materiels_empruntes
 
     if request.user.is_authenticated:
         context['utilisateur'] = get_object_or_404(Utilisateur, user=request.user)
@@ -376,35 +325,9 @@ def emplacements(request):
     return render(request, 'emplacement/emplacements.html', context=context)
 
 def emplacement(request, emplacement_pk):
-    date_du_jour = dt.date.today()
-
     context = {}
     context['emplacement'] = get_object_or_404(Emplacement, pk=emplacement_pk)   
     context['materiels'] = Materiel.objects.filter(emplacement=context['emplacement']).order_by('identifiant') 
-
-    materiels_empruntes = {}
-    materiels_reserves = {}
-
-    for materiel in context['materiels']:
-        reservation = Emprunt.objects.filter(
-            materiel=materiel,
-            cloture=False,
-            date_debut_resa__lte=date_du_jour,
-            date_fin_resa__gte=date_du_jour 
-        ).first()
-
-        emprunt = Emprunt.objects.filter(
-            materiel=materiel,
-            cloture=False,
-            date_debut_resa__lte=date_du_jour,
-            date_debut_emprunt__lte=date_du_jour
-        ).first()
-
-        materiels_reserves[materiel.id] = reservation is not None
-        materiels_empruntes[materiel.id] = emprunt is not None
-
-    context['materiels_reserves'] = materiels_reserves
-    context['materiels_empruntes'] = materiels_empruntes
 
     if request.user.is_authenticated:
         context['utilisateur'] = get_object_or_404(Utilisateur, user=request.user)
