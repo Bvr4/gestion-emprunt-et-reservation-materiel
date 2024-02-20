@@ -24,6 +24,8 @@ def index(request):
     return render(request, 'materiel/index.html', context=context)
 
 
+@login_required(login_url="/login")
+@permission_required("materiel.view_materiel", login_url="/login", raise_exception=True)
 def materiel(request, materiel_pk):
     date_du_jour = dt.date.today()
     context={}
@@ -51,6 +53,8 @@ def materiel(request, materiel_pk):
     return render(request, 'materiel/fiche_materiel/materiel.html', context=context)
 
 
+@login_required(login_url="/login")
+@permission_required("materiel.add_materiel", login_url="/login", raise_exception=True)
 def creer_materiel(request):
     if request.method == 'POST':
         form = CreerMateriel(request.POST)
@@ -62,11 +66,13 @@ def creer_materiel(request):
     return render(request, 'materiel/creer-materiel.html', {'form':form})
 
 
+@login_required(login_url="/login")
+@permission_required("materiel.add_materiel", login_url="/login", raise_exception=True)
 # Permet de récupérer le prochain identifiant lors de la création de matériel, quand l'utilisateur choisi une catégorie
 def get_prochain_identifiant(request):
     if request.method == 'GET':
         categorie = request.GET.get('categorie')
-        if categorie is not None and categorie != '':
+        if categorie is not None and categorie is not '':
             prochain_identifiant = prochain_id_materiel(categorie)
             # On renvoie le formulaire avec la valeur initiale définie
             form = CreerMateriel(initial={'identifiant': prochain_identifiant})
@@ -74,6 +80,8 @@ def get_prochain_identifiant(request):
     return HttpResponse(400)
 
 
+@login_required(login_url="/login")
+@permission_required("materiel.change_materiel", login_url="/login", raise_exception=True)
 def editer_materiel(request, materiel_pk):
     materiel_a_editer = get_object_or_404(Materiel, pk=materiel_pk)
     if request.method == 'POST':
@@ -88,6 +96,8 @@ def editer_materiel(request, materiel_pk):
     return render(request, 'materiel/editer-materiel.html', {'form':form, 'materiel':materiel_a_editer})
 
 
+@login_required(login_url="/login")
+@permission_required("materiel.delete_materiel", login_url="/login", raise_exception=True)
 def supprimer_materiel(request, materiel_pk):    
     materiel = get_object_or_404(Materiel, pk=materiel_pk)
     nom_materiel = materiel.nom
@@ -114,6 +124,8 @@ def creer_compte(request):
     return render(request, 'registration/creer-compte.html', {'form_user':form_user, 'form_utilisateur':form_utilisateur})
 
 
+@login_required(login_url="/login")
+@permission_required("materiel.add_emprunt", login_url="/login", raise_exception=True)
 def reserver_materiel(request, materiel_pk):
     materiel = get_object_or_404(Materiel, pk=materiel_pk)
     utilisateur = get_utilisateur_data(request.user)
@@ -167,11 +179,15 @@ def reserver_materiel(request, materiel_pk):
     return render(request, 'materiel/fiche_materiel/reserver-materiel.html', {'form':form, 'materiel':materiel})
 
 
+@login_required(login_url="/login")
+@permission_required("materiel.add_emprunt", login_url="/login", raise_exception=True)
 def reserver_materiel_bouton(request, materiel_pk):
     materiel = get_object_or_404(Materiel, pk=materiel_pk)
     return render(request, 'materiel/fiche_materiel/reserver-materiel-bouton.html', {'materiel':materiel})
 
 
+@login_required(login_url="/login")
+@permission_required("materiel.view_utilisateur", login_url="/login", raise_exception=True)
 def utilisateur(request, utilisateur_pk):
     context={}
     # utilisateur dont on affiche les informations
@@ -183,6 +199,8 @@ def utilisateur(request, utilisateur_pk):
     return render(request, 'utilisateur/utilisateur.html', context)
 
 
+@login_required(login_url="/login")
+@permission_required("materiel.change_emprunt", login_url="/login", raise_exception=True)
 def emprunter_materiel_bouton(request, emprunt_pk):
     emprunt = get_object_or_404(Emprunt, pk=emprunt_pk)
     utilisateur = get_object_or_404(Utilisateur, user=request.user)
@@ -203,6 +221,8 @@ def emprunter_materiel_bouton(request, emprunt_pk):
     return render(request, 'materiel/fiche_materiel/emprunter-materiel-bouton.html', {'emprunt':emprunt, 'utilisateur':utilisateur})
 
 
+@login_required(login_url="/login")
+@permission_required("materiel.add_commentaire", login_url="/login", raise_exception=True)
 def creer_commentaire(request, materiel_pk):
     materiel = get_object_or_404(Materiel, pk=materiel_pk)
     if request.method == 'POST':
@@ -219,6 +239,8 @@ def creer_commentaire(request, materiel_pk):
     return render(request, 'materiel/fiche_materiel/creer-commentaire.html', {'form':form, 'materiel':materiel})
 
 
+@login_required(login_url="/login")
+@permission_required("materiel.add_commentaire", login_url="/login", raise_exception=True)
 def creer_commentaire_bouton(request, materiel_pk):
     materiel = get_object_or_404(Materiel, pk=materiel_pk)
     return render(request, 'materiel/fiche_materiel/creer-commentaire-bouton.html', {'materiel':materiel})
@@ -245,6 +267,8 @@ def categorie(request, categorie_pk):
     return render(request, 'categorie/categorie.html', context=context)
 
 
+@login_required(login_url="/login")
+@permission_required("materiel.add_categorie", login_url="/login", raise_exception=True)
 def creer_categorie(request):
     if request.method == 'POST':
         form = CreerCategorie(request.POST)
@@ -256,6 +280,8 @@ def creer_categorie(request):
     return render(request, 'categorie/creer-categorie.html', {'form':form})
 
 
+@login_required(login_url="/login")
+@permission_required("materiel.change_categorie", login_url="/login", raise_exception=True)
 def editer_categorie(request, categorie_pk):
     categorie_a_editer = get_object_or_404(Categorie, pk=categorie_pk)
     ancien_prefixe = categorie_a_editer.prefixe_identifiant
@@ -281,6 +307,8 @@ def editer_categorie(request, categorie_pk):
     return render(request, 'categorie/editer-categorie.html', {'form':form, 'categorie':categorie_a_editer})
 
 
+@login_required(login_url="/login")
+@permission_required("materiel.delete_categorie", login_url="/login", raise_exception=True)
 def supprimer_categorie(request, categorie_pk):    
     categorie = get_object_or_404(Categorie, pk=categorie_pk)
 
@@ -294,6 +322,8 @@ def supprimer_categorie(request, categorie_pk):
     return redirect('/categories') 
 
 
+@login_required(login_url="/login")
+@permission_required("materiel.view_utilisateur", login_url="/login", raise_exception=True)
 def utilisateurs(request):
     context = {}
     context['utilisateurs'] = Utilisateur.objects.order_by('user__last_name')
@@ -301,6 +331,8 @@ def utilisateurs(request):
     return render(request, 'utilisateur/utilisateurs.html', context=context)
 
 
+@login_required(login_url="/login")
+@permission_required("materiel.change_utilisateur", login_url="/login", raise_exception=True)
 def editer_utilisateur(request, utilisateur_pk):
     utilisateur_a_editer = get_object_or_404(Utilisateur, pk=utilisateur_pk)
     if request.method == 'POST':
@@ -319,6 +351,8 @@ def editer_utilisateur(request, utilisateur_pk):
     return render(request, 'utilisateur/editer-utilisateur.html', {'form_user':form_user, 'form_utilisateur':form_utilisateur, 'utilisateur_a_editer':utilisateur_a_editer})
 
 
+@login_required(login_url="/login")
+@permission_required("materiel.delete_utilisateur", login_url="/login", raise_exception=True)
 def supprimer_utilisateur(request, utilisateur_pk):   
     utilisateur = get_object_or_404(Utilisateur, pk=utilisateur_pk)
     nom_utilisateur = utilisateur.user.username
@@ -349,6 +383,8 @@ def emplacement(request, emplacement_pk):
     return render(request, 'emplacement/emplacement.html', context=context)
 
 
+@login_required(login_url="/login")
+@permission_required("materiel.add_emplacement", login_url="/login", raise_exception=True)
 def creer_emplacement(request):
     if request.method == 'POST':
         form = CreerEmplacement(request.POST)
@@ -360,6 +396,8 @@ def creer_emplacement(request):
     return render(request, 'emplacement/creer-emplacement.html', {'form':form})
 
 
+@login_required(login_url="/login")
+@permission_required("materiel.change_emplacement", login_url="/login", raise_exception=True)
 def editer_emplacement(request, emplacement_pk):
     emplacement_a_editer = get_object_or_404(Emplacement, pk=emplacement_pk)
     if request.method == 'POST':
@@ -374,6 +412,8 @@ def editer_emplacement(request, emplacement_pk):
     return render(request, 'emplacement/editer-emplacement.html', {'form':form, 'emplacement':emplacement_a_editer})
 
 
+@login_required(login_url="/login")
+@permission_required("materiel.delete_emplacement", login_url="/login", raise_exception=True)
 def supprimer_emplacement(request, emplacement_pk):
     emplacement = get_object_or_404(Emplacement, pk=emplacement_pk)
 
