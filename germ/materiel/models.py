@@ -1,6 +1,6 @@
 import datetime as dt
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 
@@ -67,6 +67,26 @@ class Utilisateur(models.Model):
     # permet d'avoir le nom visible dans l'interface d'admin django
     def __str__(self) -> str:
         return self.user.username
+    
+    # On surcharge la methode save pour pouvoir gérer les groupes de permissions en fonction des booléens
+    def save(self, *args, **kwargs):
+        super(Utilisateur, self).save(*args, **kwargs)
+
+        groupe_usagers = Group.objects.get(name='usagers')
+        groupe_emprunteurs= Group.objects.get(name='emprunteurs')
+        groupe_moderateurs = Group.objects.get(name='moderateurs')
+
+        self.user.groups.add(groupe_usagers)
+
+        if self.peut_emprunter:
+            self.user.groups.add(groupe_emprunteurs)
+        else:
+            self.user.groups.remove(groupe_emprunteurs)
+
+        if self.est_moderateur:
+            self.user.groups.add(groupe_moderateurs)
+        else:
+            self.user.groups.remove(groupe_moderateurs)
 
     # Permet de tester si un utilisateur a des emprunts en cours
     def has_emprunts_en_cours(self):

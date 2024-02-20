@@ -6,6 +6,7 @@ from django.contrib.auth.models import User, Group
 from django.utils import timezone
 from django.urls import reverse
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
 from materiel.models import Emplacement, Categorie, Materiel, Emprunt, Utilisateur, Commentaire
 from materiel.forms import CreerMateriel, EditerMateriel, CreationUtilisateur, CreationUser, ReserverMateriel, ReserverMaterielModerateur, CreerCommentaire
 from materiel.forms import CreerCategorie, EditerCategorie, CreerEmplacement, EditerEmplacement, EditerUser, EditerUtilisateur
@@ -65,7 +66,7 @@ def creer_materiel(request):
 def get_prochain_identifiant(request):
     if request.method == 'GET':
         categorie = request.GET.get('categorie')
-        if categorie is not None and categorie is not '':
+        if categorie is not None and categorie != '':
             prochain_identifiant = prochain_id_materiel(categorie)
             # On renvoie le formulaire avec la valeur initiale définie
             form = CreerMateriel(initial={'identifiant': prochain_identifiant})
