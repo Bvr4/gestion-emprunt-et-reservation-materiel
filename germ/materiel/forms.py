@@ -64,6 +64,27 @@ class CreationUser(UserCreationForm):
         fields = ["username", "email", "first_name", "last_name", "password1", "password2"]
 
 
+class EditerUtilisateur(forms.ModelForm):
+    numero_telephone = forms.CharField(label="Numéro de téléphone", max_length=17)
+    commune_residence = forms.CharField(label="Commune de résidence", max_length=50)
+
+    class Meta:
+        model = Utilisateur
+        fields = ["numero_telephone", "commune_residence", "peut_emprunter"]
+
+
+class EditerUser(forms.ModelForm):
+    username = forms.CharField(label="Nom d'utilisateur")
+    first_name = forms.CharField(label="Prénom")
+    last_name = forms.CharField(label="Nom de famille")
+    email = forms.EmailField(required=True)
+    # utilisateur = EditerUtilisateur()
+
+    class Meta:
+        model = User
+        fields = ["username", "first_name", "last_name", "email"]
+
+
 class ReserverMateriel(forms.ModelForm):
     date_debut_resa = forms.DateField(label="Date de début de réservation", widget=forms.widgets.DateInput(attrs={"type": "date"}))
     date_fin_resa = forms.DateField(label="Date de fin de réservation", widget=forms.widgets.DateInput(attrs={"type": "date"}))

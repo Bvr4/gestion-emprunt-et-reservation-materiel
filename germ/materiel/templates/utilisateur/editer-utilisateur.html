@@ -1,0 +1,21 @@
+{% extends 'materiel/base.html' %} 
+{% block content %}
+<main class="container">
+    <h2>Editer l'utilisateur</h2>
+    <form method="post" action="/editer-utilisateur/{{utilisateur_a_editer.pk}}">
+        {% csrf_token %}
+        <p>{{ form_user }}
+        {{ form_utilisateur }}</p>
+        <p>
+            <div class="grid">         
+                <input type=button value="Annuler" onClick="javascript:history.go(-1);" class="secondary">
+                <button type="submit", name="creer">Enregistrer</button>
+            </div>
+        </p>
+    </form>
+    <form>     
+        {% csrf_token %}   
+        <button class="outline secondary" hx-target="closest body" hx-post="{% url 'supprimer-utilisateur' utilisateur_a_editer.pk %}" hx-confirm="Etes vous sur de vouloir supprimer cet utilisateur ?">Supprimer</button> 
+    </form>
+</main>
+{% endblock content %}

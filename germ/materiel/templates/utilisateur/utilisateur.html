@@ -3,12 +3,15 @@
 
 <header class="container">
     <h1>{{ utilisateur_fiche.user.username }}</h1>
-    <h4>{{ utilisateur_fiche.user.first_name }}, {{ utilisateur_fiche.user.last_name }}</h3>
-    Commune de résidence : {{ utilisateur_fiche.commune_residence }}
+    <h4>{{ utilisateur_fiche.user.first_name }} {{ utilisateur_fiche.user.last_name }}</h3>
+    <p>Commune de résidence : {{ utilisateur_fiche.commune_residence }}
     <br>Numéro de téléphone : {{ utilisateur_fiche.numero_telephone }}
     {% if utilisateur_fiche.est_moderateur %}<br><mark>Est modérateur</mark>{% endif %}
-    {% include 'utilisateur/utilisateur-peut-emprunter.html' with utilisateur_fiche=utilisateur_fiche utilisateur=utilisateur %}
-    
+    <br>{% if utilisateur_fiche.peut_emprunter %} <ins>Peut emprunter</ins>{% else %}<mark>Ne peut pas emprunter</mark>{% endif %}
+    </p>
+    {% if utilisateur.est_moderateur %}
+        <a href="{% url 'editer-utilisateur' utilisateur_fiche.pk %}"><button>Editer les informations</button></a>
+    {% endif %}    
 </header>
 <main class="container">
     <h3>Réservations réalisées par l'utilisateur :</h3>

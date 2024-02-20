@@ -7,7 +7,8 @@ from django.utils import timezone
 from django.urls import reverse
 from django.contrib import messages
 from materiel.models import Emplacement, Categorie, Materiel, Emprunt, Utilisateur, Commentaire
-from materiel.forms import CreerMateriel, EditerMateriel, CreationUtilisateur, CreationUser, ReserverMateriel, ReserverMaterielModerateur, CreerCommentaire, CreerCategorie, EditerCategorie, CreerEmplacement, EditerEmplacement
+from materiel.forms import CreerMateriel, EditerMateriel, CreationUtilisateur, CreationUser, ReserverMateriel, ReserverMaterielModerateur, CreerCommentaire
+from materiel.forms import CreerCategorie, EditerCategorie, CreerEmplacement, EditerEmplacement, EditerUser, EditerUtilisateur
 from .utils import get_utilisateur_data, prochain_id_materiel
 
 
@@ -181,23 +182,6 @@ def utilisateur(request, utilisateur_pk):
     return render(request, 'utilisateur/utilisateur.html', context)
 
 
-def utilisateur_peut_emprunter(request, utilisateur_pk):
-    # utilisateur à modifier
-    utilisateur_fiche = get_object_or_404(Utilisateur, pk=utilisateur_pk)
-    if request.method == 'POST':
-        if utilisateur_fiche.peut_emprunter:
-            utilisateur_fiche.peut_emprunter = False
-        else:
-            utilisateur_fiche.peut_emprunter = True
-        utilisateur_fiche.save()
-
-    # utilisateur actuellement connecté
-    if request.user.is_authenticated:
-        utilisateur = get_object_or_404(Utilisateur, user=request.user)
-
-    return render(request, 'utilisateur/utilisateur-peut-emprunter.html', {'utilisateur_fiche':utilisateur_fiche, 'utilisateur':utilisateur})
-
-
 def emprunter_materiel_bouton(request, emprunt_pk):
     emprunt = get_object_or_404(Emprunt, pk=emprunt_pk)
     utilisateur = get_object_or_404(Utilisateur, user=request.user)
@@ -308,11 +292,40 @@ def supprimer_categorie(request, categorie_pk):
     messages.success(request, f'La catégorie "{nom_categorie}" a été supprimé.')
     return redirect('/categories') 
 
+
 def utilisateurs(request):
     context = {}
-    context['utilisateurs'] = Utilisateur.objects.order_by('user')
+    context['utilisateurs'] = Utilisateur.objects.order_by('user__last_name')
 
     return render(request, 'utilisateur/utilisateurs.html', context=context)
+
+
+def editer_utilisateur(request, utilisateur_pk):
+    utilisateur_a_editer = get_object_or_404(Utilisateur, pk=utilisateur_pk)
+    if request.method == 'POST':
+        form_user = EditerUser(request.POST, instance=utilisateur_a_editer.user)
+        form_utilisateur = EditerUtilisateur(request.POST, instance=utilisateur_a_editer)
+        if form_utilisateur.is_valid() and form_user.is_valid():
+            user_edite = form_user.save()
+            utilisateur_edite = form_utilisateur.save(commit=False)
+            utilisateur_edite.user = user_edite
+            utilisateur_edite.save()
+            return redirect(utilisateur, utilisateur_pk=utilisateur_pk)
+    else:
+        form_user = EditerUser(instance=utilisateur_a_editer.user)
+        form_utilisateur = EditerUtilisateur(instance=utilisateur_a_editer)
+
+    return render(request, 'utilisateur/editer-utilisateur.html', {'form_user':form_user, 'form_utilisateur':form_utilisateur, 'utilisateur_a_editer':utilisateur_a_editer})
+
+
+def supprimer_utilisateur(request, utilisateur_pk):   
+    utilisateur = get_object_or_404(Utilisateur, pk=utilisateur_pk)
+    nom_utilisateur = utilisateur.user.username
+    # On supprime l'user, comme l'utilisateur est en mode "on_delete=cascade", il sera supprimé lui aussi.
+    utilisateur.user.delete()
+    messages.success(request, f'L\'utilisateur "{nom_utilisateur}" a été supprimé.')
+    return redirect('/utilisateurs') 
+
 
 def emplacements(request):
     context = {}
@@ -323,6 +336,7 @@ def emplacements(request):
         context['utilisateur'] = get_object_or_404(Utilisateur, user=request.user)
 
     return render(request, 'emplacement/emplacements.html', context=context)
+
 
 def emplacement(request, emplacement_pk):
     context = {}

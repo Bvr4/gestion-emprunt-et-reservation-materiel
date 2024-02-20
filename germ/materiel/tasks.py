@@ -24,7 +24,6 @@ def cloture_emprunt_non_empruntes():
 # Fonction qui envoie un mail de rappel si la date de fin de réservation est dépassée, et que le matériel est signalé comme emprunté
 @shared_task
 def rappel_fin_de_reservation_depassee():
-    print('ouaich')
     date_du_jour = dt.date.today()
     # On récupère tous les enregistrements Emprunts non cloturés aux dates de réservation expirées
     emprunts_expires = Emprunt.objects.filter(
@@ -33,11 +32,8 @@ def rappel_fin_de_reservation_depassee():
         date_debut_emprunt__isnull = False, 
         date_fin_emprunt__isnull = True
         ).all()    
-    
-    print (emprunts_expires)
-    
+        
     for emprunt in emprunts_expires:
-        print (emprunt)
         utilisateur = Utilisateur.objects.filter(pk=emprunt.utilisateur.pk).first()
         email_dest = utilisateur.user.email
         sujet = f'Matériel "{emprunt.materiel.nom}" non retourné'
