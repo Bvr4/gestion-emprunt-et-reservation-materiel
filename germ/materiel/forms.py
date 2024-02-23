@@ -199,7 +199,7 @@ class FiltreMateriel(django_filters.FilterSet):
 
     disponibilite = django_filters.ChoiceFilter(label='Disponibilité', choices=DISPONIBILITE_CHOIX, method='filtre_disponibilite')
 
-    nom = django_filters.CharFilter(lookup_expr='icontains')
+    nom = django_filters.CharFilter(label='Nom', lookup_expr='icontains')
 
     # On filtrer en fonction du champ calculé 'disponibilite'
     def filtre_disponibilite(self, queryset, name, value):
@@ -214,7 +214,7 @@ class FiltreMateriel(django_filters.FilterSet):
             return Materiel.objects.filter(pk__in=filtered_ids)
         else:
             return queryset
-    
+            
     class Meta:
         model = Materiel
         fields = ['nom', 'categorie', 'emplacement', 'disponibilite']

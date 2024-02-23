@@ -58,7 +58,7 @@ class Materiel(models.Model):
         if self.est_emprunte():
             return 'emprunté'
         elif self.est_reserve():
-            return 'reservé'
+            return 'réservé'
         return 'disponible'
 
     def reservation_en_cours(self):

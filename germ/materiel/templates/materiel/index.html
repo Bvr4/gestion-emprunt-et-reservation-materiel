@@ -3,13 +3,14 @@
 
 <main class="container">
     <h2>Liste du matériel</h2>
+    <form hx-get="{% url 'home' %}" hx-target="body" hx-trigger="change, keyup changed delay:500ms">
+        <div class="grid">
+        {{ filtre_materiel.form.as_p }}
+        </div>
+    </form>
     <p>
         Cliquez sur un élément pour voir ses informations et procéder à sa réservation.
     </p>
-    <form method="get">
-        {{ filtre_materiel.form }}
-        <input type="submit" />
-    </form>
     <table>
         <tr>
             <th><b>Nom</b></th>
