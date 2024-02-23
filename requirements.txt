@@ -1,4 +1,5 @@
 django
+django-filter
 celery
 django-celery-beat
 redis

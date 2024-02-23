@@ -6,6 +6,10 @@
     <p>
         Cliquez sur un élément pour voir ses informations et procéder à sa réservation.
     </p>
+    <form method="get">
+        {{ filtre_materiel.form }}
+        <input type="submit" />
+    </form>
     <table>
         <tr>
             <th><b>Nom</b></th>
@@ -13,7 +17,7 @@
             <th><b>Catégorie</b></th>
             <th><b>Etat</b></th>
         </tr>
-        {% for materiel in materiels %}
+        {% for materiel in filtre_materiel.qs %}
             {% include 'materiel/materiel-liste.html' %}
         {% endfor %}
     </table>

@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+import django_filters
 from materiel.models import Materiel, Categorie, Emplacement, Utilisateur, Emprunt, Commentaire
 
 class CreerMateriel(forms.ModelForm):
@@ -187,3 +188,33 @@ class EditerEmplacement(forms.ModelForm):
             raise forms.ValidationError({"nom": "Cette emplacement existe déjà"})
                 
         return cleaned_data
+    
+
+class FiltreMateriel(django_filters.FilterSet):
+    DISPONIBILITE_CHOIX = [
+        ('disponible', 'Disponible'),
+        ('reserve', 'Réservé'),
+        ('emprunte', 'Emprunté'),
+    ]
+
+    disponibilite = django_filters.ChoiceFilter(label='Disponibilité', choices=DISPONIBILITE_CHOIX, method='filtre_disponibilite')
+
+    nom = django_filters.CharFilter(lookup_expr='icontains')
+
+    # On filtrer en fonction du champ calculé 'disponibilite'
+    def filtre_disponibilite(self, queryset, name, value):
+        if value == 'disponible':
+            filtered_ids = [materiel.id for materiel in queryset if materiel.disponibilite() == 'disponible']
+            return Materiel.objects.filter(pk__in=filtered_ids)
+        elif value == 'emprunte':
+            filtered_ids = [materiel.id for materiel in queryset if materiel.disponibilite() == 'emprunté']
+            return Materiel.objects.filter(pk__in=filtered_ids)
+        elif value == 'reserve':
+            filtered_ids = [materiel.id for materiel in queryset if materiel.disponibilite() == 'réservé']
+            return Materiel.objects.filter(pk__in=filtered_ids)
+        else:
+            return queryset
+    
+    class Meta:
+        model = Materiel
+        fields = ['nom', 'categorie', 'emplacement', 'disponibilite']

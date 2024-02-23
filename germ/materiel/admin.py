@@ -9,7 +9,7 @@ class CategorieAdmin(admin.ModelAdmin):
     list_display = ('nom', 'prefixe_identifiant')
 
 class MaterielAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'identifiant', 'categorie', 'emplacement', 'empruntable')
+    list_display = ('nom', 'identifiant', 'categorie', 'emplacement', 'empruntable', 'disponibilite')
 
 class EmpruntAdmin(admin.ModelAdmin):
     list_display = ('materiel', 'utilisateur', 'date_debut_resa', 'date_fin_resa', 'date_debut_emprunt', 'date_fin_emprunt', 'cloture')

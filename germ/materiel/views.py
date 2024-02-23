@@ -10,12 +10,15 @@ from django.contrib.auth.decorators import login_required, permission_required
 from materiel.models import Emplacement, Categorie, Materiel, Emprunt, Utilisateur, Commentaire
 from materiel.forms import CreerMateriel, EditerMateriel, CreationUtilisateur, CreationUser, ReserverMateriel, ReserverMaterielModerateur, CreerCommentaire
 from materiel.forms import CreerCategorie, EditerCategorie, CreerEmplacement, EditerEmplacement, EditerUser, EditerUtilisateur
+from materiel.forms import FiltreMateriel
 from .utils import get_utilisateur_data, prochain_id_materiel
 
 
 def index(request):
     context={}
     context['materiels'] = Materiel.objects.order_by('identifiant')
+
+    context['filtre_materiel'] = FiltreMateriel(request.GET, queryset=Materiel.objects.order_by('identifiant'))
     
     # utilisateur actuellement connecté
     if request.user.is_authenticated:
