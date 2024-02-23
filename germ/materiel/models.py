@@ -53,6 +53,28 @@ class Materiel(models.Model):
             date_debut_emprunt__lte=date_du_jour).exists():
             return True
         return False
+
+    def reservation_en_cours(self):
+        date_du_jour = dt.date.today()
+        reservation_en_cours = self.emprunt_set.filter(
+            cloture=False,
+            date_debut_resa__lte=date_du_jour
+            ).first()
+        return reservation_en_cours
+    
+    def reservations_passees(self, nombre=5):
+        date_du_jour = dt.date.today()
+        reservations_passees = self.emprunt_set.filter(
+            date_fin_resa__lt=date_du_jour 
+            ).order_by('-date_fin_resa').all()[:nombre]
+        return reservations_passees
+
+    def reservations_futures(self):
+        date_du_jour = dt.date.today()
+        reservations_futures = self.emprunt_set.filter(
+            date_debut_resa__gt=date_du_jour 
+            ).order_by('date_debut_resa').all()
+        return reservations_futures
     
 
 # Utilisateur
@@ -103,6 +125,7 @@ class Utilisateur(models.Model):
             date_debut_resa__lte=date_du_jour).exists():
             return True
         return False
+    
 
 # Emprunt et réservation d'un matériel par un usager
 class Emprunt(models.Model):

@@ -27,26 +27,9 @@ def index(request):
 @login_required(login_url="/login")
 @permission_required("materiel.view_materiel", login_url="/login", raise_exception=True)
 def materiel(request, materiel_pk):
-    date_du_jour = dt.date.today()
     context={}
     context['materiel'] = get_object_or_404(Materiel, pk=materiel_pk)
     context['commentaires'] = Commentaire.objects.filter(materiel=context['materiel']).order_by('-date')
-
-    context['reservation_en_cours'] = Emprunt.objects.filter(
-        materiel=context['materiel'],
-        cloture=False,
-        date_debut_resa__lte=date_du_jour
-    ).first()
-
-    context['reservation_passees'] = Emprunt.objects.filter(
-        materiel=context['materiel'],
-        date_fin_resa__lt=date_du_jour 
-    ).order_by('-date_fin_resa').all()[:5]
-
-    context['reservation_futures'] = Emprunt.objects.filter(
-        materiel=context['materiel'],
-        date_debut_resa__gt=date_du_jour 
-    ).order_by('date_debut_resa').all()
 
     if request.user.is_authenticated:
         context['utilisateur'] = get_object_or_404(Utilisateur, user=request.user)
@@ -137,27 +120,10 @@ def reserver_materiel(request, materiel_pk):
         form_model_resa = ReserverMateriel
 
     if request.method == 'POST':
-        date_du_jour = dt.date.today()
         # On recharge tout le contexte pour pouvoir render toute la section reservation
         context = {}
         context['materiel'] = materiel
         context['utilisateur'] = utilisateur
-
-        context['reservation_en_cours'] = Emprunt.objects.filter(
-            materiel=context['materiel'],
-            cloture=False,
-            date_debut_resa__lte=date_du_jour
-        ).first()
-
-        context['reservation_passees'] = Emprunt.objects.filter(
-            materiel=context['materiel'],
-            date_fin_resa__lt=date_du_jour 
-        ).order_by('-date_fin_resa').all()[:5]
-
-        context['reservation_futures'] = Emprunt.objects.filter(
-            materiel=context['materiel'],
-            date_debut_resa__gt=date_du_jour 
-        ).order_by('date_debut_resa').all()
 
         form = form_model_resa(request.POST, initial={'materiel': materiel})
 
@@ -166,8 +132,6 @@ def reserver_materiel(request, materiel_pk):
             if not utilisateur.est_moderateur:
                 reservation.utilisateur = get_utilisateur_data(request.user)
             reservation.save()
-            if reservation.date_debut_resa <= date_du_jour:
-                context['reservation_en_cours'] = reservation
             return render(request, 'materiel/fiche_materiel/section-reservation.html', context=context)
         else:
             context['formulaire_resa'] = form
