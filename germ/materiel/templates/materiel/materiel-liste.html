@@ -2,5 +2,5 @@
     <td><a href="{% url 'materiel' materiel.pk %}">{{ materiel.nom }}</a></td>
     <td>{{ materiel.identifiant }}</td>
     <td><a href="{% url 'categorie' materiel.categorie.pk %}">{{ materiel.categorie }}</a></td>
-    <td>{% if materiel.est_emprunte %}Emprunté{% elif materiel.est_reserve %}Réservé{% else %}Disponible{% endif %}</td>
+    <td>{{ materiel.disponibilite|capfirst }}</td>
 </tr>

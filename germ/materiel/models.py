@@ -40,7 +40,7 @@ class Materiel(models.Model):
     # Permet de savoir si le matériel est actuellement réservé
     def est_reserve(self):
         date_du_jour = dt.date.today()
-        if Emprunt.objects.filter(materiel=self, cloture=False,
+        if self.emprunt_set.filter(cloture=False,
             date_debut_resa__lte=date_du_jour).exists():
             return True
         return False
@@ -48,11 +48,18 @@ class Materiel(models.Model):
     # Permet de savoir si le matériel est actuellement emprunté
     def est_emprunte(self):
         date_du_jour = dt.date.today()
-        if Emprunt.objects.filter(materiel=self, cloture=False,            
+        if self.emprunt_set.filter(cloture=False,            
             date_debut_resa__lte=date_du_jour,
             date_debut_emprunt__lte=date_du_jour).exists():
             return True
         return False
+    
+    def disponibilite(self):
+        if self.est_emprunte():
+            return 'emprunté'
+        elif self.est_reserve():
+            return 'reservé'
+        return 'disponible'
 
     def reservation_en_cours(self):
         date_du_jour = dt.date.today()
