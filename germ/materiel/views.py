@@ -37,21 +37,22 @@ def materiel(request, materiel_pk):
     reservations_calendrier = []
     for reservation in context['materiel'].reservations_passees(nombre=0):
         reservations_calendrier.append({
-            'title': 'Réservé',
+            'title': 'Réservé par ' + reservation.utilisateur.user.username,
             'start': reservation.date_debut_resa.isoformat(),
             'end': (reservation.date_fin_resa + dt.timedelta(days=1)).isoformat(),
         })
     
     if context['materiel'].reservation_en_cours():
+        reservation = context['materiel'].reservation_en_cours()
         reservations_calendrier.append({
-            'title': 'Réservé',
-            'start': context['materiel'].reservation_en_cours().date_debut_resa.isoformat(),
-            'end': (context['materiel'].reservation_en_cours().date_fin_resa + dt.timedelta(days=1)).isoformat(),
+            'title': 'Réservé par ' + reservation.utilisateur.user.username,
+            'start': reservation.date_debut_resa.isoformat(),
+            'end': (reservation.date_fin_resa + dt.timedelta(days=1)).isoformat(),
         })
     
     for reservation in context['materiel'].reservations_futures():
         reservations_calendrier.append({
-            'title': 'Réservé',
+            'title': 'Réservé par ' + reservation.utilisateur.user.username,
             'start': reservation.date_debut_resa.isoformat(),
             'end': (reservation.date_fin_resa + dt.timedelta(days=1)).isoformat(),
         })
