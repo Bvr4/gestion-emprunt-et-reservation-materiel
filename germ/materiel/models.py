@@ -71,9 +71,14 @@ class Materiel(models.Model):
     
     def reservations_passees(self, nombre=5):
         date_du_jour = dt.date.today()
-        reservations_passees = self.emprunt_set.filter(
-            date_fin_resa__lt=date_du_jour 
-            ).order_by('-date_fin_resa').all()[:nombre]
+        if nombre == 0:
+            reservations_passees = self.emprunt_set.filter(
+                date_fin_resa__lt=date_du_jour 
+                ).order_by('-date_fin_resa').all()
+        else:
+            reservations_passees = self.emprunt_set.filter(
+                date_fin_resa__lt=date_du_jour 
+                ).order_by('-date_fin_resa').all()[:nombre]
         return reservations_passees
 
     def reservations_futures(self):

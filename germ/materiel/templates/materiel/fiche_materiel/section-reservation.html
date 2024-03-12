@@ -1,3 +1,23 @@
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.11/index.global.min.js'></script>
+<script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendrier');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        locale: 'fr',
+        firstDay: 1,
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            start: 'title', 
+            center: '',
+            end: 'prev,next' 
+        },
+        events: {{ reservations_calendrier|safe }},
+    });
+    calendar.render();
+    });
+
+</script>
 <section id="reservations">
     <h2>Voir sa disponiblité et procéder à une réservation</h2>
 
@@ -19,6 +39,10 @@
         {% if not materiel.empruntable %}
             <p><mark>Ce matériel n'est pas disponible à l'emprunt pour le moment.</mark></p>
         {% endif %}
+
+        <article>
+            <div id="calendrier"></div>
+        </article>
 
         <h4>Prochaines réservations :</h4>
         {% if materiel.reservations_futures %}

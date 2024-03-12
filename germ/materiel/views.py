@@ -32,6 +32,33 @@ def index(request):
 def materiel(request, materiel_pk):
     context={}
     context['materiel'] = get_object_or_404(Materiel, pk=materiel_pk)
+
+    # On renseigne les informations de réservations pour l'affichage dans le calendrier
+    reservations_calendrier = []
+    for reservation in context['materiel'].reservations_passees(nombre=0):
+        reservations_calendrier.append({
+            'title': 'Réservé par ' + reservation.utilisateur.user.username,
+            'start': reservation.date_debut_resa.isoformat(),
+            'end': (reservation.date_fin_resa + dt.timedelta(days=1)).isoformat(),
+        })
+    
+    if context['materiel'].reservation_en_cours():
+        reservation = context['materiel'].reservation_en_cours()
+        reservations_calendrier.append({
+            'title': 'Réservé par ' + reservation.utilisateur.user.username,
+            'start': reservation.date_debut_resa.isoformat(),
+            'end': (reservation.date_fin_resa + dt.timedelta(days=1)).isoformat(),
+        })
+    
+    for reservation in context['materiel'].reservations_futures():
+        reservations_calendrier.append({
+            'title': 'Réservé par ' + reservation.utilisateur.user.username,
+            'start': reservation.date_debut_resa.isoformat(),
+            'end': (reservation.date_fin_resa + dt.timedelta(days=1)).isoformat(),
+        })
+
+    context['reservations_calendrier'] = reservations_calendrier
+
     context['commentaires'] = Commentaire.objects.filter(materiel=context['materiel']).order_by('-date')
 
     if request.user.is_authenticated:
@@ -58,7 +85,7 @@ def creer_materiel(request):
 def get_prochain_identifiant(request):
     if request.method == 'GET':
         categorie = request.GET.get('categorie')
-        if categorie is not None and categorie is not '':
+        if categorie is not None and categorie != '':
             prochain_identifiant = prochain_id_materiel(categorie)
             # On renvoie le formulaire avec la valeur initiale définie
             form = CreerMateriel(initial={'identifiant': prochain_identifiant})
