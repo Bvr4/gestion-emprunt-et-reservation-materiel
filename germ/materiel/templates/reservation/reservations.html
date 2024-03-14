@@ -1,0 +1,29 @@
+{% extends 'materiel/base.html' %} 
+{% block content %}
+
+<main class="container">
+    <h2>Liste des réservations et emprunts en cours</h2>
+    <p>
+        Cliquez sur un élément pour voir ses informations.
+    </p>
+    <table>
+        <tr>
+            <th><b>Nom</b></th>
+            <th><b>Identifiant</b></th>
+            <th><b>Catégorie</b></th>
+            <th><b>Etat</b></th>
+            <th><b>Emprunteur</b></th>
+        </tr>
+        {% for materiel in materiels %}
+        <tr>
+            <td><a href="{% url 'materiel' materiel.pk %}">{{ materiel.nom }}</a></td>
+            <td>{{ materiel.identifiant }}</td>
+            <td><a href="{% url 'categorie' materiel.categorie.pk %}">{{ materiel.categorie }}</a></td>
+            <td>{{ materiel.disponibilite|capfirst }}{% if materiel.date_debut_emprunt %} depuis le {{ materiel.date_debut_emprunt }}{% endif %}</td>
+            <td>{{ materiel.emprunteur }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</main>
+
+{% endblock content %}

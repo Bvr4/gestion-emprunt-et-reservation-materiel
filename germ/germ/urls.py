@@ -31,4 +31,5 @@ urlpatterns = [
     path('utilisateur/<int:utilisateur_pk>', mviews.utilisateur, name='utilisateur'),
     path('editer-utilisateur/<int:utilisateur_pk>', mviews.editer_utilisateur, name='editer-utilisateur'),
     path('supprimer-utilisateur/<int:utilisateur_pk>', mviews.supprimer_utilisateur, name='supprimer-utilisateur'),
+    path('reservations', mviews.reservations, name='reservations'),
 ]

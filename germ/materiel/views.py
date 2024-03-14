@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
+from django.db.models import F
 from materiel.models import Emplacement, Categorie, Materiel, Emprunt, Utilisateur, Commentaire
 from materiel.forms import CreerMateriel, EditerMateriel, CreationUtilisateur, CreationUser, ReserverMateriel, ReserverMaterielModerateur, CreerCommentaire
 from materiel.forms import CreerCategorie, EditerCategorie, CreerEmplacement, EditerEmplacement, EditerUser, EditerUtilisateur
@@ -419,3 +420,21 @@ def supprimer_emplacement(request, emplacement_pk):
     emplacement.delete()
     messages.success(request, f'L\'emplacement "{nom_emplacement}" a été supprimé.')
     return redirect('/emplacements')
+
+
+@login_required(login_url="/login")
+@permission_required("materiel.view_emprunt", login_url="/login", raise_exception=True)
+def reservations(request):
+    if request.user.is_authenticated:
+        utilisateur = get_object_or_404(Utilisateur, user=request.user)
+
+    if utilisateur.est_moderateur:
+        materiels = Materiel.objects.filter(emprunt__cloture = False).annotate(emprunteur=F('emprunt__utilisateur__user__username'), date_debut_emprunt=F('emprunt__date_debut_emprunt'))
+    else:
+        materiels = Materiel.objects.filter(emprunt__cloture = False, emprunt__utilisateur=utilisateur).annotate(emprunteur=F('emprunt__utilisateur__user__username'), date_debut_emprunt=F('emprunt__date_debut_emprunt'))
+
+    # On filtre pour ne garder que les matériels réservés ou empruntés (donc non disponible)
+    # ids_non_dispos = [materiel.id for materiel in materiels if materiel.disponibilite() != 'disponible']
+    # materiels = Materiel.objects.filter(pk__in=ids_non_dispos)
+
+    return render(request, 'reservation/reservations.html', {'materiels':materiels})
