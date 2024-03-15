@@ -152,31 +152,32 @@ class Emprunt(models.Model):
     def clean(self):
         date_du_jour = dt.date.today()
 
-        if self.date_fin_resa < date_du_jour:
+        if self.date_fin_resa and self.date_fin_resa < date_du_jour:
             raise ValidationError({"date_fin_resa": "La date de fin de réservation ne peut être antérieure à la date du jour"})
         
-        if self.date_fin_resa < self.date_debut_resa: 
+        if self.date_fin_resa and self.date_debut_resa and self.date_fin_resa < self.date_debut_resa: 
             raise ValidationError("La date de fin de reservation doit être ultérieure à la date de début de réservation")
         
-        # Vérifier s'il existe des réservations qui chevauchent la période d'emprunt demandée
-        resa_chevauche_debut = Emprunt.objects.filter(
-            materiel=self.materiel,
-            cloture=False,
-            date_debut_resa__lte=self.date_debut_resa,
-            date_fin_resa__gte=self.date_debut_resa
-        ).exclude(pk=self.pk)
-        resa_chevauche_fin = Emprunt.objects.filter(
-            materiel=self.materiel,
-            cloture=False,
-            date_debut_resa__lte=self.date_fin_resa,
-            date_fin_resa__gte=self.date_fin_resa
-        ).exclude(pk=self.pk)
+        if self.date_fin_resa and self.date_debut_resa:
+            # Vérifier s'il existe des réservations qui chevauchent la période d'emprunt demandée
+            resa_chevauche_debut = Emprunt.objects.filter(
+                materiel=self.materiel,
+                cloture=False,
+                date_debut_resa__lte=self.date_debut_resa,
+                date_fin_resa__gte=self.date_debut_resa
+            ).exclude(pk=self.pk)
+            resa_chevauche_fin = Emprunt.objects.filter(
+                materiel=self.materiel,
+                cloture=False,
+                date_debut_resa__lte=self.date_fin_resa,
+                date_fin_resa__gte=self.date_fin_resa
+            ).exclude(pk=self.pk)
 
-        if resa_chevauche_debut.exists():
-            raise ValidationError({"date_debut_resa": "Une réservation existe déjà à la date demandée."})
-        
-        if resa_chevauche_fin.exists():
-            raise ValidationError({"date_fin_resa": "Une réservation existe déjà à la date demandée."})
+            if resa_chevauche_debut.exists():
+                raise ValidationError({"date_debut_resa": "Une réservation existe déjà à la date demandée."})
+            
+            if resa_chevauche_fin.exists():
+                raise ValidationError({"date_fin_resa": "Une réservation existe déjà à la date demandée."})
 
 
 # Commentaires, liés à un matériel 

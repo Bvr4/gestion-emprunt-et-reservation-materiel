@@ -2,7 +2,31 @@
     <h4>Selectionnez les dates de réservation</h4>
     <div class="grid">
         {% csrf_token %}
-        {{ form.as_p }}
+        {% for field in form %}
+            {% if field.is_hidden %}
+                <div class="hidden-label">
+                    {{ field.label_tag }}
+                </div>
+                {{ field }}
+            {% else %}
+                <p>
+                    {{ field.label_tag }}
+                    {{ field }}
+                </p>
+            {% endif %}
+        {% endfor %}
+    </div>
+    <div class="grid">
+        {% if form.non_field_errors %}
+            <mark>{{ form.non_field_errors }}</mark>
+        {% endif %}
+        {% for field in form %}
+            {% if not field.is_hidden %}
+                {% if field.errors %}
+                    <mark>{{ field.errors }}</mark>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
     </div>
 
     <p>

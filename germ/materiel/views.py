@@ -433,8 +433,4 @@ def reservations(request):
     else:
         materiels = Materiel.objects.filter(emprunt__cloture = False, emprunt__utilisateur=utilisateur).annotate(emprunteur=F('emprunt__utilisateur__user__username'), date_debut_emprunt=F('emprunt__date_debut_emprunt'))
 
-    # On filtre pour ne garder que les matériels réservés ou empruntés (donc non disponible)
-    # ids_non_dispos = [materiel.id for materiel in materiels if materiel.disponibilite() != 'disponible']
-    # materiels = Materiel.objects.filter(pk__in=ids_non_dispos)
-
     return render(request, 'reservation/reservations.html', {'materiels':materiels})
