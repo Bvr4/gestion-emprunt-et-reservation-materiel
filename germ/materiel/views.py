@@ -1,6 +1,7 @@
 import datetime as dt
+import io
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, FileResponse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User, Group
 from django.utils import timezone
@@ -12,7 +13,7 @@ from materiel.models import Emplacement, Categorie, Materiel, Emprunt, Utilisate
 from materiel.forms import CreerMateriel, EditerMateriel, CreationUtilisateur, CreationUser, ReserverMateriel, ReserverMaterielModerateur, CreerCommentaire
 from materiel.forms import CreerCategorie, EditerCategorie, CreerEmplacement, EditerEmplacement, EditerUser, EditerUtilisateur
 from materiel.forms import FiltreMateriel
-from .utils import get_utilisateur_data, prochain_id_materiel
+from .utils import get_utilisateur_data, prochain_id_materiel, export_materiels
 
 
 def index(request):
@@ -434,3 +435,20 @@ def reservations(request):
         materiels = Materiel.objects.filter(emprunt__cloture = False, emprunt__utilisateur=utilisateur).annotate(emprunteur=F('emprunt__utilisateur__user__username'), date_debut_emprunt=F('emprunt__date_debut_emprunt'))
 
     return render(request, 'reservation/reservations.html', {'materiels':materiels})
+
+
+@login_required(login_url="/login")
+@permission_required("materiel.add_materiel", login_url="/login", raise_exception=True)
+def import_export_liste_materiel(request):
+    return render(request, 'import_export/import-export-liste-materiel.html')
+
+
+@login_required(login_url="/login")
+@permission_required("materiel.add_materiel", login_url="/login", raise_exception=True)
+def export_liste_materiel(request):
+    # On crée un buffer pour recevoir le fichier ODS que l'on va envoyer
+    buffer = io.BytesIO()
+    export_materiels().save(buffer)
+    buffer.seek(0)
+    return FileResponse(buffer, as_attachment=True, filename="export_liste_materiel.ods")
+

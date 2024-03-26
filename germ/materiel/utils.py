@@ -1,4 +1,7 @@
 import re
+from odf.opendocument import OpenDocumentSpreadsheet
+from odf.table import Table, TableRow, TableCell
+from odf.text import P
 from materiel.models import Utilisateur, Categorie, Materiel
 
 # Utilisation de la relation reverse pour accéder aux informations Utilisateur depuis User
@@ -39,3 +42,86 @@ def prochain_id_materiel(categorie_id):
             return None
     
     return incrementer_identifiant(dernier_id.identifiant)
+
+
+# Fonction qui permet d'exporter la liste des matériels au format odt
+def export_materiels():
+    materiels = Materiel.objects.all().order_by('identifiant')
+
+    # Création du document
+    doc = OpenDocumentSpreadsheet()
+    table = Table(name="Materiels")
+
+    # Création de l'en-tête
+    row = TableRow()
+    cell = TableCell()
+    cell.addElement(P(text=str('Categorie')))  
+    row.addElement(cell)
+
+    cell = TableCell()
+    cell.addElement(P(text=str('Préfixe catégorie')))  
+    row.addElement(cell)
+
+    cell = TableCell()
+    cell.addElement(P(text=str('Emplacement')))  
+    row.addElement(cell)
+
+    cell = TableCell()
+    cell.addElement(P(text=str('Référence')))  
+    row.addElement(cell)
+
+    cell = TableCell()
+    cell.addElement(P(text=str('Nom')))  
+    row.addElement(cell)
+
+    cell = TableCell()
+    cell.addElement(P(text=str('Description')))  
+    row.addElement(cell)
+
+    cell = TableCell()
+    cell.addElement(P(text=str('Empruntable')))  
+    row.addElement(cell)
+
+    table.addElement(row)
+
+
+    # Ajout des données au tableau
+    for materiel in materiels:
+        row = TableRow()
+        cell = TableCell()
+        cell.addElement(P(text=str(materiel.categorie.nom)))  
+        row.addElement(cell)
+
+        cell = TableCell()
+        cell.addElement(P(text=str(materiel.categorie.prefixe_identifiant)))  
+        row.addElement(cell)
+
+        cell = TableCell()
+        cell.addElement(P(text=str(materiel.emplacement)))  
+        row.addElement(cell)
+
+        cell = TableCell()
+        cell.addElement(P(text=str(materiel.identifiant)))  
+        row.addElement(cell)
+
+        cell = TableCell()
+        cell.addElement(P(text=str(materiel.nom)))  
+        row.addElement(cell)
+
+        cell = TableCell()
+        cell.addElement(P(text=str(materiel.description)))  
+        row.addElement(cell)
+
+        if materiel.empruntable:
+            empruntable = "oui"
+        else:
+            empruntable = "non"
+        cell = TableCell()
+        cell.addElement(P(text=str(empruntable)))  
+        row.addElement(cell)
+
+        table.addElement(row)
+
+    doc.spreadsheet.addElement(table)
+
+    return doc

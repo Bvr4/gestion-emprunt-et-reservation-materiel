@@ -32,4 +32,6 @@ urlpatterns = [
     path('editer-utilisateur/<int:utilisateur_pk>', mviews.editer_utilisateur, name='editer-utilisateur'),
     path('supprimer-utilisateur/<int:utilisateur_pk>', mviews.supprimer_utilisateur, name='supprimer-utilisateur'),
     path('reservations', mviews.reservations, name='reservations'),
+    path('import-export-liste-materiel', mviews.import_export_liste_materiel, name='import-export-liste-materiel'),
+    path('export-liste-materiel', mviews.export_liste_materiel, name='export-liste-materiel'),
 ]

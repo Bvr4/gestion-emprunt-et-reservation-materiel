@@ -1,0 +1,17 @@
+{% extends 'materiel/base.html' %} 
+{% block content %}
+
+<main class="container">
+    <h2>Exporter la liste du materiel</h2>
+    <p>
+        Vous pouvez exporter la liste du matériel enregistré dans la base, au format ods, en cliquant ici :
+        <br><br><a href="{% url 'export-liste-materiel' %}"><button>Exporter</button></a>         
+    </p>
+    <h2>Importer la liste du materiel</h2>
+    <p>
+        Vous pouvez importer de nouveaux matériels en téléversant un document ods. Ce document doit être au même format que celui exporté.        
+        <br><br><a href="#"><button>Importer</button></a> 
+    </p>
+</main>
+
+{% endblock content %}

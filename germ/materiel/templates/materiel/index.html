@@ -23,8 +23,14 @@
         {% endfor %}
     </table>
     {% if utilisateur.est_moderateur %}
-        <a href="{% url 'creer-materiel' %}"><button>Ajouter un nouvel élément</button></a> 
+        <form action="{% url 'creer-materiel' %}">
+            <input type="submit" value="Ajouter un nouvel élément"/>
+        </form>
+        <form action="{% url 'import-export-liste-materiel' %}">
+            <input type="submit" value="Importer / exporter la liste des matériels" class="outline secondary"/>
+        </form>
     {% endif %}
+    
 </main>
 
 {% endblock content %}
