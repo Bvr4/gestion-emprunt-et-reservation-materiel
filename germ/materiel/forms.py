@@ -218,3 +218,7 @@ class FiltreMateriel(django_filters.FilterSet):
     class Meta:
         model = Materiel
         fields = ['nom', 'categorie', 'emplacement', 'disponibilite']
+
+
+class ImporterMateriel(forms.Form):
+    fichier = forms.FileField()

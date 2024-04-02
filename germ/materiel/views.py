@@ -12,8 +12,8 @@ from django.db.models import F
 from materiel.models import Emplacement, Categorie, Materiel, Emprunt, Utilisateur, Commentaire
 from materiel.forms import CreerMateriel, EditerMateriel, CreationUtilisateur, CreationUser, ReserverMateriel, ReserverMaterielModerateur, CreerCommentaire
 from materiel.forms import CreerCategorie, EditerCategorie, CreerEmplacement, EditerEmplacement, EditerUser, EditerUtilisateur
-from materiel.forms import FiltreMateriel
-from .utils import get_utilisateur_data, prochain_id_materiel, export_materiels
+from materiel.forms import FiltreMateriel, ImporterMateriel
+from .utils import get_utilisateur_data, prochain_id_materiel, export_materiels, import_materiels
 
 
 def index(request):
@@ -440,7 +440,14 @@ def reservations(request):
 @login_required(login_url="/login")
 @permission_required("materiel.add_materiel", login_url="/login", raise_exception=True)
 def import_export_liste_materiel(request):
-    return render(request, 'import_export/import-export-liste-materiel.html')
+    if request.method == 'POST':
+        form = ImporterMateriel(request.POST, request.FILES)
+        if form.is_valid():
+            import_materiels(request.FILES['fichier'])
+            # ...
+    else:
+        form = ImporterMateriel()
+    return render(request, 'import_export/import-export-liste-materiel.html', {'form': form})
 
 
 @login_required(login_url="/login")
