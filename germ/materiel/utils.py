@@ -141,7 +141,7 @@ def import_materiels(fichier, maj_description, maj_disponibilite):
                 # Si l'emplacement n'existe pas, on la crée
                 if not Emplacement.objects.filter(nom=nom_emplacement).exists(): 
                     emplacement = Emplacement.objects.create(nom=nom_emplacement, commune=' ')
-                    messages.append(f"{identifiant} - {nom} : l'emplacement' {nom_emplacement} a été crée en base, "\
+                    messages.append(f"{identifiant} - {nom} : l'emplacement {nom_emplacement} a été crée en base, "\
                                     "pensez à mettre à jour les informations concernant la commune de cet emplacement")
 
                 # Si nous n'avons pas d'erreur concernant la catégorie, on continue le traitement
@@ -229,10 +229,10 @@ def verifier_entetes(ligne):
     
     try:
         for cell in ligne:
-            en_tete.append(str(cell.value))
+            en_tete.append(str(cell.value).lower())
 
-        if (en_tete[0] == 'Catégorie' and en_tete[1] == 'Préfixe catégorie' and en_tete[2] == 'Emplacement' and 
-            en_tete[3] == 'Référence' and en_tete[4] == 'Nom' and en_tete[5] == 'Description' and en_tete[6] == 'Empruntable'):
+        if (en_tete[0] == 'catégorie' and en_tete[1] == 'préfixe catégorie' and en_tete[2] == 'emplacement' and 
+            en_tete[3] == 'référence' and en_tete[4] == 'nom' and en_tete[5] == 'description' and en_tete[6] == 'empruntable'):
             return True
             
     except:

@@ -439,13 +439,14 @@ def reservations(request):
 @login_required(login_url="/login")
 @permission_required("materiel.add_materiel", login_url="/login", raise_exception=True)
 def import_export_liste_materiel(request):
+    messages_import = None
     if request.method == 'POST':
         form = ImporterMateriel(request.POST, request.FILES)
         if form.is_valid():
-            import_materiels(request.FILES['fichier'], form.cleaned_data['maj_description'], form.cleaned_data['maj_disponibilite'])
+            messages_import = import_materiels(request.FILES['fichier'], form.cleaned_data['maj_description'], form.cleaned_data['maj_disponibilite'])
     else:
         form = ImporterMateriel()
-    return render(request, 'import_export/import-export-liste-materiel.html', {'form': form})
+    return render(request, 'import_export/import-export-liste-materiel.html', {'form': form, 'messages_import': messages_import})
 
 
 @login_required(login_url="/login")
