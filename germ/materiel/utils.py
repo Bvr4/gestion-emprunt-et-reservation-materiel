@@ -1,9 +1,8 @@
 import re
-from odf.opendocument import OpenDocumentSpreadsheet
-from odf.opendocument import load
-from odf.table import Table, TableRow, TableCell
-from odf.text import P
-from materiel.models import Utilisateur, Categorie, Materiel
+import os
+from ezodf import newdoc, opendoc, Sheet
+from django.core.files.storage import FileSystemStorage
+from materiel.models import Utilisateur, Categorie, Materiel, Emplacement
 
 # Utilisation de la relation reverse pour accéder aux informations Utilisateur depuis User
 def get_utilisateur_data(user):
@@ -50,86 +49,41 @@ def export_materiels():
     materiels = Materiel.objects.all().order_by('identifiant')
 
     # Création du document
-    doc = OpenDocumentSpreadsheet()
-    table = Table(name='Materiels')
+    doc = newdoc(doctype='ods')
+    doc.sheets.insert(0, Sheet('Materiels'))
+    sheet = doc.sheets[0]
 
     # Création de l'en-tête
-    row = TableRow()
-    cell = TableCell()
-    cell.addElement(P(text=str('Catégorie')))  
-    row.addElement(cell)
-
-    cell = TableCell()
-    cell.addElement(P(text=str('Préfixe catégorie')))  
-    row.addElement(cell)
-
-    cell = TableCell()
-    cell.addElement(P(text=str('Emplacement')))  
-    row.addElement(cell)
-
-    cell = TableCell()
-    cell.addElement(P(text=str('Référence')))  
-    row.addElement(cell)
-
-    cell = TableCell()
-    cell.addElement(P(text=str('Nom')))  
-    row.addElement(cell)
-
-    cell = TableCell()
-    cell.addElement(P(text=str('Description')))  
-    row.addElement(cell)
-
-    cell = TableCell()
-    cell.addElement(P(text=str('Empruntable')))  
-    row.addElement(cell)
-
-    table.addElement(row)
-
+    entetes = ['Catégorie', 'Préfixe catégorie', 'Emplacement', 'Référence', 'Nom', 'Description', 'Empruntable']
+    
+    for i, entete in enumerate(entetes):
+        sheet[0, i].set_value(entete)
 
     # Ajout des données au tableau
-    for materiel in materiels:
-        row = TableRow()
-        cell = TableCell()
-        cell.addElement(P(text=str(materiel.categorie.nom)))  
-        row.addElement(cell)
-
-        cell = TableCell()
-        cell.addElement(P(text=str(materiel.categorie.prefixe_identifiant)))  
-        row.addElement(cell)
-
-        cell = TableCell()
-        cell.addElement(P(text=str(materiel.emplacement)))  
-        row.addElement(cell)
-
-        cell = TableCell()
-        cell.addElement(P(text=str(materiel.identifiant)))  
-        row.addElement(cell)
-
-        cell = TableCell()
-        cell.addElement(P(text=str(materiel.nom)))  
-        row.addElement(cell)
-
-        cell = TableCell()
-        cell.addElement(P(text=str(materiel.description)))  
-        row.addElement(cell)
-
+    for i, materiel in enumerate(materiels):
         if materiel.empruntable:
             empruntable = 'oui'
         else:
             empruntable = 'non'
-        cell = TableCell()
-        cell.addElement(P(text=str(empruntable)))  
-        row.addElement(cell)
 
-        table.addElement(row)
+        donnees = [materiel.categorie.nom,
+                materiel.categorie.prefixe_identifiant,
+                materiel.emplacement,
+                materiel.identifiant,
+                materiel.nom,
+                materiel.description,
+                empruntable
+        ]
 
-    doc.spreadsheet.addElement(table)
+        for j, valeur in enumerate(donnees):
+            sheet.append_rows(1)
+            sheet[i+1, j].set_value(str(valeur))
 
-    return doc
+    return doc.tobytes()
 
 
 # Fonction qui permet d'importer la liste des matériels au format ods
-def import_materiels(fichier):
+def import_materiels(fichier, maj_description, maj_disponibilite):
     print(fichier.name)
     print(fichier.name[-4:])
     try:
@@ -138,39 +92,135 @@ def import_materiels(fichier):
     except:
         raise ValueError
     
-    doc = load(fichier)
-    d = doc.spreadsheet
+    # On enregistre le document pour pouvoir le traiter avec ezodf
+    fs = FileSystemStorage()
+    temp = fs.save('fichier_import_materiel_temp.ods', fichier)
+    temp_path = fs.path(temp)
+
+    # Ouverture du fichier avec ezodf
+    doc = opendoc(temp_path)
+    sheet = doc.sheets[0]
 
     premiere_ligne = True
+    messages = []
 
-    for row in d.getElementsByType(TableRow):
+    for row in sheet.rows():
         # On vérifie que les en-têtes sont correctes sur la première ligne
         if premiere_ligne:
             if not verifier_entetes(row):
+                os.remove(temp_path)    # On supprime le fichier
                 raise ValueError
             premiere_ligne = False
-        
-        # Si la catégorie est renseignée, on traite la ligne
-        if row.getElementsByType(TableCell)[0] is not None and str(row.getElementsByType(TableCell)[0]) != '':
+        else:
+            # On met les valeurs de la ligne dans une liste
+            infos_materiel = [cell.value for cell in row]
+            # Si la catégorie est renseignée, on traite la ligne
+            if infos_materiel[0] is not None and str(infos_materiel[0]) != '':
+                nom_categorie = infos_materiel[0]
+                prefixe_categorie = infos_materiel[1]
+                nom_emplacement = infos_materiel[2]
+                identifiant = infos_materiel[3]
+                nom = infos_materiel[4]
+                description = infos_materiel[5]
+                empruntable = infos_materiel[6]
 
-            print (row)
-            print(row.getElementsByType(TableCell))
-            print(f"Catégorie : {row.getElementsByType(TableCell)[0]}")
-            print(f"Préfixe : {row.getElementsByType(TableCell)[1]}")
-            print(f"Emplacement : {row.getElementsByType(TableCell)[2]}")
-            print(f"Référence : {row.getElementsByType(TableCell)[3]}")
-            print(f"Nom : {row.getElementsByType(TableCell)[4]}")
-            print(f"Description : {row.getElementsByType(TableCell)[5]}")
-            print(f"Empruntable : {row.getElementsByType(TableCell)[6]}")
+                erreur = False
 
-            # for cell in row.getElementsByType(TableCell):
-            #     cell_text = ""
-            #     for paragraph in cell.getElementsByType(P):
-            #         print(paragraph)
-            #         cell_text += str(paragraph)
+                # Si la catégorie n'existe pas, on la crée
+                if not Categorie.objects.filter(nom=nom_categorie).exists():
+                    # Sauf si le préfixe est utilisé pour une catégorie existante
+                    if Categorie.objects.filter(prefixe_identifiant=prefixe_categorie).exists():
+                        messages.append(f"{identifiant} - {nom} : la catégorie {nom_categorie} n'a pas été trouvée en base, "\
+                                        "mais le prefixe {prefixe_categorie} existe déjà pour une catégorie existante. "\
+                                        "Cet enregistrement ne pourra être traité.")
+                        erreur = True
+                    else:
+                        categorie = Categorie.objects.create(nom=nom_categorie, prefixe_identifiant=prefixe_categorie)
+                        messages.append(f"{identifiant} - {nom} : la catégorie {nom_categorie} ({prefixe_categorie}) a été crée en base")
 
-            #     print (cell_text)
-        print("---")
+                # Si l'emplacement n'existe pas, on la crée
+                if not Emplacement.objects.filter(nom=nom_emplacement).exists(): 
+                    emplacement = Emplacement.objects.create(nom=nom_emplacement, commune=' ')
+                    messages.append(f"{identifiant} - {nom} : l'emplacement' {nom_emplacement} a été crée en base, "\
+                                    "pensez à mettre à jour les informations concernant la commune de cet emplacement")
+
+                # Si nous n'avons pas d'erreur concernant la catégorie, on continue le traitement
+                if not erreur:
+                    categorie = Categorie.objects.filter(nom=nom_categorie).first()
+                    emplacement = Emplacement.objects.filter(nom=nom_emplacement).first()
+
+                    # Si l'identifiant n'est pas renseignée ou qu'il n'existe pas déjà en base
+                    if identifiant is None or identifiant == '' or not Materiel.objects.filter(identifiant=identifiant).exists():
+                        # Si le nom n'existe pas déjà pour un autre matériel, on crée le matériel
+                        if not Materiel.objects.filter(nom=nom).exists():
+                            materiel = Materiel()
+                            materiel.nom = nom
+
+                            # Si l'identifiant n'est pas renseigné, on cherche le prochain identifiant pour la catégorie
+                            if identifiant is None or identifiant == '':
+                                materiel.identifiant = prochain_id_materiel(categorie.id)  # à tester !
+                                print("prochain identifiant = " + prochain_id_materiel(categorie.id))
+                            else:
+                                materiel.identifiant = identifiant
+
+                            materiel.description = description
+                            
+                            materiel.categorie = categorie
+                            materiel.emplacement = emplacement
+                            
+                            if empruntable.lower() == "non":
+                                empruntable = False
+                            else:
+                                empruntable = True
+                            materiel.empruntable = empruntable
+                            materiel.save()
+                            messages.append(f"{identifiant} - {nom} : le matériel a été créé en base.")
+                        else:
+                            messages.append(f"{nom} : un matériel existant porte déjà ce nom. Renseignez son identifiant si vous souhaitez mettre à jour ses informations.")
+                        
+
+                    # Si la référence existe déjà
+                    elif Materiel.objects.filter(identifiant=identifiant).exists():
+                        materiel = Materiel.objects.filter(identifiant=identifiant).first()
+
+                        if materiel.nom != nom:
+                            messages.append(f"{identifiant} - {nom} : un matériel existe déjà pour cet identifiant, avec un nom différent ({materiel.nom}).")
+                        else:
+                            # Si les informations sont différentes de celles en base, on met à jour l'enregistrement
+                            if materiel.categorie != categorie:
+                                materiel.categorie = categorie
+                                materiel.save()
+                                messages.append(f"{identifiant} - {nom} : la catégorie a été mise à jour.")
+
+                            if materiel.emplacement != emplacement:
+                                materiel.emplacement = emplacement
+                                materiel.save()
+                                messages.append(f"{identifiant} - {nom} : l'emplacement a été mise à jour.")
+
+                            if maj_description:
+                                materiel.description = description
+                                materiel.save()
+                                messages.append(f"{identifiant} - {nom} : la description a été mise à jour.")
+                        
+                            if maj_disponibilite:
+                                if empruntable.lower() == "oui":
+                                    empruntable_bool = True
+                                elif empruntable.lower() == "non":
+                                    empruntable_bool = False
+                                else:
+                                    empruntable_bool = None
+                                    messages.append(f'{identifiant} - {nom} : la disponibilité n\'a pas été mise à jour: {empruntable} n\'est pas une valeur valide. '\
+                                                    'La valeur attendue est "oui" ou "non". ')
+
+                                if empruntable_bool is not None:
+                                    materiel.empruntable = empruntable_bool
+                                    materiel.save()
+                                    messages.append(f"{identifiant} - {nom} : la disponibilité a été mise à jour")
+                       
+    # Une fois le traitement terminé, on supprime le fichier
+    os.remove(temp_path)
+    print(messages)
+    return messages
 
 
 # Fonction qui permet de vérifier que les en-têtes sont ben au format attendu pour la fonction import_materiel
@@ -178,8 +228,8 @@ def verifier_entetes(ligne):
     en_tete = []
     
     try:
-        for element in ligne.getElementsByType(TableCell):
-            en_tete.append(str(element))
+        for cell in ligne:
+            en_tete.append(str(cell.value))
 
         if (en_tete[0] == 'Catégorie' and en_tete[1] == 'Préfixe catégorie' and en_tete[2] == 'Emplacement' and 
             en_tete[3] == 'Référence' and en_tete[4] == 'Nom' and en_tete[5] == 'Description' and en_tete[6] == 'Empruntable'):

@@ -222,3 +222,5 @@ class FiltreMateriel(django_filters.FilterSet):
 
 class ImporterMateriel(forms.Form):
     fichier = forms.FileField()
+    maj_description = forms.BooleanField(label='Mettre à jour la description des matériels existants', required=False)
+    maj_disponibilite = forms.BooleanField(label='Mettre à jour la disponibilité des matériels existants', required=False)

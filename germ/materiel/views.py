@@ -1,7 +1,6 @@
 import datetime as dt
-import io
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, JsonResponse, FileResponse
+from django.http import HttpResponse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User, Group
 from django.utils import timezone
@@ -443,8 +442,7 @@ def import_export_liste_materiel(request):
     if request.method == 'POST':
         form = ImporterMateriel(request.POST, request.FILES)
         if form.is_valid():
-            import_materiels(request.FILES['fichier'])
-            # ...
+            import_materiels(request.FILES['fichier'], form.cleaned_data['maj_description'], form.cleaned_data['maj_disponibilite'])
     else:
         form = ImporterMateriel()
     return render(request, 'import_export/import-export-liste-materiel.html', {'form': form})
@@ -453,9 +451,9 @@ def import_export_liste_materiel(request):
 @login_required(login_url="/login")
 @permission_required("materiel.add_materiel", login_url="/login", raise_exception=True)
 def export_liste_materiel(request):
-    # On crée un buffer pour recevoir le fichier ODS que l'on va envoyer
-    buffer = io.BytesIO()
-    export_materiels().save(buffer)
-    buffer.seek(0)
-    return FileResponse(buffer, as_attachment=True, filename="export_liste_materiel.ods")
+    export = export_materiels()
+    response = HttpResponse(
+        export, content_type='application/vnd.oasis.opendocument.spreadsheet')
+    response['Content-Disposition'] = 'attachment; filename="export.ods"'
+    return response
 

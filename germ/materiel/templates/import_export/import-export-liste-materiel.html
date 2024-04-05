@@ -12,7 +12,7 @@
         Vous pouvez importer de nouveaux matériels en téléversant un document ods. Ce document doit être au même format que celui exporté. 
         <form method="post" action="{% url 'import-export-liste-materiel' %}" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form }}        
+            {{ form.as_p}}        
             <p>
                 <button type="submit", name="creer">Importer</button>
             </p>
