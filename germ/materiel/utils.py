@@ -163,7 +163,10 @@ def import_materiels(fichier, maj_description, maj_disponibilite):
                             else:
                                 materiel.identifiant = identifiant
 
-                            materiel.description = description
+                            if description is not None:
+                                materiel.description = description
+                            else:
+                                materiel.description = ""
                             
                             materiel.categorie = categorie
                             materiel.emplacement = emplacement
@@ -197,7 +200,7 @@ def import_materiels(fichier, maj_description, maj_disponibilite):
                                 materiel.save()
                                 messages.append(f"{identifiant} - {nom} : l'emplacement a été mise à jour.")
 
-                            if maj_description:
+                            if maj_description and description is not None:
                                 materiel.description = description
                                 materiel.save()
                                 messages.append(f"{identifiant} - {nom} : la description a été mise à jour.")
