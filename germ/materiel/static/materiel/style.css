@@ -9,3 +9,7 @@ table.fc-col-header {
 table.fc-scrollgrid-sync-table {
     margin-bottom: 0;
 }
+
+.hidden-label {
+    display: none;
+}
