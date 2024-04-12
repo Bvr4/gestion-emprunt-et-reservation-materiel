@@ -5,3 +5,4 @@ django-celery-beat
 redis
 lxml
 ezodf
+python-dotenv
