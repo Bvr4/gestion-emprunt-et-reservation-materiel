@@ -1,9 +1,8 @@
 import datetime as dt
 from celery import shared_task
+from django.conf import settings
 from django.core.mail import send_mail
-from django.contrib.auth.models import User
-from materiel.models import Emprunt, Utilisateur, Materiel
-
+from materiel.models import Emprunt, Utilisateur
 
 # Fonction qui permet de cloturer les emprunts ayant uniquement des dates de réservation (pas de date de début d'emprunt), une fois la période passée
 @shared_task
@@ -46,6 +45,6 @@ def rappel_fin_de_reservation_depassee():
         send_mail(
             sujet,
             message,
-            "from@example.com", # à modifier avant mise en prod
+            settings.DEFAULT_FROM_EMAIL,
             [email_dest],
         )
