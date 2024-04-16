@@ -84,8 +84,6 @@ def export_materiels():
 
 # Fonction qui permet d'importer la liste des matériels au format ods
 def import_materiels(fichier, maj_description, maj_disponibilite):
-    print(fichier.name)
-    print(fichier.name[-4:])
     try:
         if fichier.name[-4:] != '.ods':
             raise TypeError
@@ -158,8 +156,7 @@ def import_materiels(fichier, maj_description, maj_disponibilite):
 
                             # Si l'identifiant n'est pas renseigné, on cherche le prochain identifiant pour la catégorie
                             if identifiant is None or identifiant == '':
-                                materiel.identifiant = prochain_id_materiel(categorie.id)  # à tester !
-                                print("prochain identifiant = " + prochain_id_materiel(categorie.id))
+                                materiel.identifiant = prochain_id_materiel(categorie.id) 
                             else:
                                 materiel.identifiant = identifiant
 
@@ -222,7 +219,6 @@ def import_materiels(fichier, maj_description, maj_disponibilite):
                        
     # Une fois le traitement terminé, on supprime le fichier
     os.remove(temp_path)
-    print(messages)
     return messages
 
 
