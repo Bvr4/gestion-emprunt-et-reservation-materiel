@@ -1,7 +1,7 @@
 {% extends 'materiel/base.html' %} 
 {% block content %}
 
-<main class="container">
+<main class="container" hx-ext="loading-states">
     <h2>Exporter la liste du materiel</h2>
     <p>
         Vous pouvez exporter la liste du matériel enregistré dans la base, au format ods, en cliquant ici :
@@ -35,11 +35,11 @@
             </p>
 
         {% else %}
-            <form method="post" action="{% url 'import-export-liste-materiel' %}" enctype="multipart/form-data">
+            <form hx-encoding="multipart/form-data">
                 {% csrf_token %}
                 {{ form.as_p}}        
                 <p>
-                    <button type="submit", name="creer">Importer</button>
+                    <button hx-post="{% url 'import-export-liste-materiel' %}" hx-target="closest body" data-loading-aria-busy>Importer</button>
                 </p>
             </form>
         {% endif %}
