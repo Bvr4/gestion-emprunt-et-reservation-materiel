@@ -13,6 +13,7 @@ from materiel.forms import CreerMateriel, EditerMateriel, CreationUtilisateur, C
 from materiel.forms import CreerCategorie, EditerCategorie, CreerEmplacement, EditerEmplacement, EditerUser, EditerUtilisateur
 from materiel.forms import FiltreMateriel, ImporterMateriel
 from .utils import get_utilisateur_data, prochain_id_materiel, export_materiels, import_materiels
+from .tasks import import_utilisateurs_dolibarr
 
 
 def index(request):
@@ -322,6 +323,9 @@ def supprimer_categorie(request, categorie_pk):
 def utilisateurs(request):
     context = {}
     context['utilisateurs'] = Utilisateur.objects.order_by('user__last_name')
+    
+    if request.user.is_authenticated:
+        context['utilisateur'] = get_object_or_404(Utilisateur, user=request.user)
 
     return render(request, 'utilisateur/utilisateurs.html', context=context)
 
@@ -458,3 +462,10 @@ def export_liste_materiel(request):
     response['Content-Disposition'] = 'attachment; filename="export.ods"'
     return response
 
+
+@login_required(login_url="/login")
+@permission_required("materiel.add_utilisateur", login_url="/login", raise_exception=True)
+def importer_utilisateurs_dolibarr(request):
+    import_utilisateurs_dolibarr()
+    messages.success(request, f'Les nouveaux utilisateurs de Dolibarr ont été importés.')
+    return redirect('/utilisateurs') 

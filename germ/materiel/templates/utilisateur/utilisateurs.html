@@ -1,7 +1,7 @@
 {% extends 'materiel/base.html' %} 
 {% block content %}
 
-<main class="container">
+<main class="container" hx-ext="loading-states">
     <h2>Liste des utilisateurs</h2>
     <p>
         Cliquez sur un élément pour voir ses informations.
@@ -28,6 +28,12 @@
             </tr>
         {% endfor %}
     </table>
+    {% if utilisateur.est_moderateur %}
+        <form>
+            {% csrf_token %} 
+            <button class="outline secondary" hx-target="closest body" hx-post="{% url 'importer-utilisateurs-dolibarr' %}" data-loading-aria-busy>Importer de nouveaux utilisateurs depuis la liste des adhérents de Dolibarr</button> 
+        </form>
+    {% endif %}
 </main>
 
 {% endblock content %}
