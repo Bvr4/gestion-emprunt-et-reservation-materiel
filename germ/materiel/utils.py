@@ -1,5 +1,7 @@
 import re
 import os
+import random
+import string
 from ezodf import newdoc, opendoc, Sheet
 from django.core.files.storage import FileSystemStorage
 from materiel.models import Utilisateur, Categorie, Materiel, Emplacement
@@ -237,3 +239,8 @@ def verifier_entetes(ligne):
     except:
         return False
     return False
+
+# Fonction qui génère un mot de passe aléatoire (utile lors de l'import d'utilisateurs depuis dolibarr(task))
+def generer_mdp(nb_char):
+    chars = string.ascii_letters + string.digits + string.punctuation
+    return ''.join(random.choice(chars) for i in range(nb_char))

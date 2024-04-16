@@ -144,3 +144,7 @@ EMAIL_HOST_USER = str(os.environ.get("EMAIL_HOST_USER"))
 EMAIL_HOST_PASSWORD = str(os.environ.get("EMAIL_HOST_PASSWORD"))
 EMAIL_USE_TLS = True 
 DEFAULT_FROM_EMAIL = str(os.environ.get("DEFAULT_FROM_EMAIL"))
+
+# Paramètres pour accéder à l'API dolibarr
+DOLIBARR_API_KEY = str(os.environ.get("DOLIBARR_API_KEY"))
+DOLIBARR_API_URL = str(os.environ.get("DOLIBARR_API_URL"))

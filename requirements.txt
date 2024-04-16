@@ -6,3 +6,4 @@ redis
 lxml
 ezodf
 python-dotenv
+requests
