@@ -1,0 +1,14 @@
+{% extends 'materiel/base.html' %} 
+{% block content %}
+
+<main class="container">
+    <h2>Saisissez un nouveau mot de passe</h2>
+    <p>Saisissez deux fois votre nouveau mot de passe afin de vérifier qu’il est correctement saisi.</p>
+    <form method="post">
+        {% csrf_token %}
+        {{form}}
+        
+        <button type="submit">Modifier mon mot de passe</button>
+    </form>
+</main>
+{% endblock content %}

@@ -1,10 +1,24 @@
 from django.contrib import admin
-from django.urls import include, path
+from django.contrib.auth import views as auth_views
+from django.urls import path
 import materiel.views as mviews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('django.contrib.auth.urls')),
+    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('reinitialisation-mdp/', 
+         auth_views.PasswordResetView.as_view(template_name='registration/reinitialisation-mdp.html'), 
+         name='reset_password'),
+    path('reinitialisation-mdp-envoye/', 
+         auth_views.PasswordResetDoneView.as_view(template_name='registration/reinitialisation-mdp-envoye.html'), 
+         name='password_reset_done'),
+    path('reinitialisation/<uidb64>/<token>/', 
+         auth_views.PasswordResetConfirmView.as_view(template_name='registration/reinitialisation-mdp-confirm.html'), 
+         name='password_reset_confirm'),
+    path('reinitialisation-mdp-ok/', 
+         auth_views.PasswordResetCompleteView.as_view(template_name='registration/reinitialisation-mdp-ok.html'), 
+         name='password_reset_complete'),
     path('creer-compte', mviews.creer_compte, name='creer-compte'),
     path('', mviews.index, name='home'),
     path('materiel/<int:materiel_pk>', mviews.materiel, name='materiel'),

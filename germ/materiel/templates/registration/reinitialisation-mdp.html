@@ -1,0 +1,14 @@
+{% extends 'materiel/base.html' %} 
+{% block content %}
+
+<main class="container">
+    <h2>Réinitialisation du mot de passe</h2>
+    <p>Mot de passe perdu ? Saisissez votre adresse électronique ci-dessous et nous vous enverrons les instructions pour en créer un nouveau.</p>
+    <form method="post">
+        {% csrf_token %}
+        {{form}}
+        
+        <button type="submit">Réinitialiser mon mot de passe</button>
+    </form>
+</main>
+{% endblock content %}
