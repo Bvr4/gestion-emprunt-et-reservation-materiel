@@ -9,7 +9,7 @@
     {% if utilisateur_fiche.est_moderateur %}<br><mark>Est modérateur</mark>{% endif %}
     <br>{% if utilisateur_fiche.peut_emprunter %} <ins>Peut emprunter</ins>{% else %}<mark>Ne peut pas emprunter</mark>{% endif %}
     </p>
-    {% if utilisateur.est_moderateur %}
+    {% if utilisateur.est_moderateur or utilisateur.pk == utilisateur_fiche.pk %}
         <a href="{% url 'editer-utilisateur' utilisateur_fiche.pk %}"><button>Editer les informations</button></a>
     {% endif %}    
 </header>
