@@ -6,7 +6,7 @@
     <p>Saisissez deux fois votre nouveau mot de passe afin de vérifier qu’il est correctement saisi.</p>
     <form method="post">
         {% csrf_token %}
-        {{form}}
+        {{form.as_p}}
         
         <button type="submit">Modifier mon mot de passe</button>
     </form>
