@@ -30,6 +30,7 @@ SECRET_KEY = str(os.environ.get("SECRET_KEY"))
 DEBUG = True
 
 ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = [os.environ.get("ALLOWED_HOSTS")] # pour la prod (à vérifier)
 
 
 # Application definition
@@ -128,6 +129,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -136,6 +138,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login'
+
+# HTTPS settings (à décommenter pour la production)
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
+# SECURE_SSL_REDIRECT = True
+
+# HSTS settings (à décommenter pour la production)
+# SECURE_HSTS_SECONDS = 31536000 # 1 an
+# SECURE_HSTS_PRELOAD = True
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 # Configuration CELERY (tâches planifiées)
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
