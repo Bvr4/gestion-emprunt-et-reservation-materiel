@@ -7,7 +7,8 @@ setuptools.setup(
     name="germ",
     version="1.0",
     install_requires=[
-        "Django>=4.2.7",
+        "gunicorn",
+        "Django>=4.2.7,<4.3",
         "django-filter>=23.5",
         "celery>=5.3.6",
         "django-celery-beat>=2.5.0",
