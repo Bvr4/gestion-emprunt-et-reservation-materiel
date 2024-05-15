@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="germ",
-    version="1.0",
+    version="0.1",
     install_requires=[
         "gunicorn",
         "Django>=4.2.7,<4.3",
