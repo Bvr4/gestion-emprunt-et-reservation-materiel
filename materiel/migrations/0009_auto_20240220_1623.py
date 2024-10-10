@@ -4,38 +4,124 @@ from django.db import migrations
 
 def creer_groupes(apps, schema_migration):
     Utilisateur = apps.get_model('materiel', 'Utilisateur')
+    Emplacement = apps.get_model('materiel', 'Emplacement')
+    Categorie = apps.get_model('materiel', 'Categorie')
+    Materiel = apps.get_model('materiel', 'Materiel')
+    Emprunt = apps.get_model('materiel', 'Emprunt')
+    Commentaire = apps.get_model('materiel', 'Commentaire')
     Group = apps.get_model('auth', 'Group')
     Permission = apps.get_model('auth', 'Permission')
+    ContentType = apps.get_model('contenttypes', 'ContentType')
 
-    add_emplacement, created = Permission.objects.get_or_create(codename='add_emplacement')
-    change_emplacement, created = Permission.objects.get_or_create(codename='change_emplacement')
-    delete_emplacement, created = Permission.objects.get_or_create(codename='delete_emplacement')
-    view_emplacement, created = Permission.objects.get_or_create(codename='view_emplacement')
+    utilisateur_content_type = ContentType.objects.get_for_model(Utilisateur)
+    emplacement_content_type = ContentType.objects.get_for_model(Emplacement)
+    categorie_content_type = ContentType.objects.get_for_model(Categorie)
+    materiel_content_type = ContentType.objects.get_for_model(Materiel)
+    emprunt_content_type = ContentType.objects.get_for_model(Emprunt)
+    commentaire_content_type = ContentType.objects.get_for_model(Commentaire)
 
-    add_categorie, created = Permission.objects.get_or_create(codename='add_categorie')
-    change_categorie, created = Permission.objects.get_or_create(codename='change_categorie')
-    delete_categorie, created = Permission.objects.get_or_create(codename='delete_categorie')
-    view_categorie, created = Permission.objects.get_or_create(codename='view_categorie')
+    add_utilisateur, created = Permission.objects.get_or_create(
+        codename='add_utilisateur',
+        content_type=utilisateur_content_type,
+    )
+    change_utilisateur, created = Permission.objects.get_or_create(
+        codename='change_utilisateur',
+        content_type=utilisateur_content_type,
+    )
+    delete_utilisateur, created = Permission.objects.get_or_create(
+        codename='delete_utilisateur',
+        content_type=utilisateur_content_type,
+    )
+    view_utilisateur, created = Permission.objects.get_or_create(
+        codename='view_utilisateur',
+        content_type=utilisateur_content_type,
+    )
 
-    add_materiel, created = Permission.objects.get_or_create(codename='add_materiel')
-    change_materiel, created = Permission.objects.get_or_create(codename='change_materiel')
-    delete_materiel, created = Permission.objects.get_or_create(codename='delete_materiel')
-    view_materiel, created = Permission.objects.get_or_create(codename='view_materiel')
+    add_emplacement, created = Permission.objects.get_or_create(
+        codename='add_emplacement', 
+        content_type=emplacement_content_type,
+    )
+    change_emplacement, created = Permission.objects.get_or_create(
+        codename='change_emplacement', 
+        content_type=emplacement_content_type,
+    )
+    delete_emplacement, created = Permission.objects.get_or_create(
+        codename='delete_emplacement', 
+        content_type=emplacement_content_type,
+    )
+    view_emplacement, created = Permission.objects.get_or_create(
+        codename='view_emplacement', 
+        content_type=emplacement_content_type,
+    )
 
-    add_utilisateur, created = Permission.objects.get_or_create(codename='add_utilisateur')
-    change_utilisateur, created = Permission.objects.get_or_create(codename='change_utilisateur')
-    delete_utilisateur, created = Permission.objects.get_or_create(codename='delete_utilisateur')
-    view_utilisateur, created = Permission.objects.get_or_create(codename='view_utilisateur')
+    add_categorie, created = Permission.objects.get_or_create(
+        codename='add_categorie',
+        content_type=categorie_content_type,
+    )
+    change_categorie, created = Permission.objects.get_or_create(
+        codename='change_categorie',
+        content_type=categorie_content_type,
+    )
+    delete_categorie, created = Permission.objects.get_or_create(
+        codename='delete_categorie',
+        content_type=categorie_content_type,
+    )
+    view_categorie, created = Permission.objects.get_or_create(
+        codename='view_categorie',
+        content_type=categorie_content_type,
+    )
+    
+    
+    add_materiel, created = Permission.objects.get_or_create(
+        codename='add_materiel',
+        content_type=materiel_content_type,
+    )
+    change_materiel, created = Permission.objects.get_or_create(
+        codename='change_materiel',
+        content_type=materiel_content_type,
+    )
+    delete_materiel, created = Permission.objects.get_or_create(
+        codename='delete_materiel',
+        content_type=materiel_content_type,
+    )
+    view_materiel, created = Permission.objects.get_or_create(
+        codename='view_materiel',
+        content_type=materiel_content_type,
+    )
 
-    add_emprunt, created = Permission.objects.get_or_create(codename='add_emprunt')
-    change_emprunt, created = Permission.objects.get_or_create(codename='change_emprunt')
-    delete_emprunt, created = Permission.objects.get_or_create(codename='delete_emprunt')
-    view_emprunt, created = Permission.objects.get_or_create(codename='view_emprunt')
+    add_emprunt, created = Permission.objects.get_or_create(
+        codename='add_emprunt',
+        content_type=emprunt_content_type,
+    )
+    change_emprunt, created = Permission.objects.get_or_create(
+        codename='change_emprunt',
+        content_type=emprunt_content_type,
+    )
+    delete_emprunt, created = Permission.objects.get_or_create(
+        codename='delete_emprunt',
+        content_type=emprunt_content_type,
+    )
+    view_emprunt, created = Permission.objects.get_or_create(
+        codename='view_emprunt',
+        content_type=emprunt_content_type,
+    )
 
-    add_commentaire, created = Permission.objects.get_or_create(codename='add_commentaire')
-    change_commentaire, created = Permission.objects.get_or_create(codename='change_commentaire')
-    delete_commentaire, created = Permission.objects.get_or_create(codename='delete_commentaire')
-    view_commentaire, created = Permission.objects.get_or_create(codename='view_commentaire')
+    add_commentaire, created = Permission.objects.get_or_create(
+        codename='add_commentaire',
+        content_type=commentaire_content_type
+    )
+    change_commentaire, created = Permission.objects.get_or_create(
+        codename='change_commentaire',
+        content_type=commentaire_content_type
+    )
+    delete_commentaire, created = Permission.objects.get_or_create(
+        codename='delete_commentaire',
+        content_type=commentaire_content_type
+    )
+    view_commentaire, created = Permission.objects.get_or_create(
+        codename='view_commentaire',
+        content_type=commentaire_content_type
+    )
     
     usager_permissions = [
         view_emplacement,
